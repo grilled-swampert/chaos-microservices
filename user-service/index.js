@@ -1,5 +1,13 @@
 const express = require('express');
+const axios = require('axios');
+
 const app = express();
+const metricsMiddleware = require('./metricsMiddleware');
+const client = require('./metrics').client;
+
+app.use(express.json());
+app.use(metricsMiddleware);
+
 const port = process.env.PORT || 3001;
 
 const users = [
@@ -28,18 +36,20 @@ app.get('/users/:id', (req, res) => {
   res.send(user);
 });
 
-// Prometheus metrics endpoint (mocked for now)
-app.get('/metrics', (req, res) => {
-  console.log(`Serving metrics`);
-  res.set('Content-Type', 'text/plain');
-  res.send(`# HELP dummy_metric Just a dummy
-# TYPE dummy_metric counter
-dummy_metric{label="value"} 1`);
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType);
+  res.send(await client.register.metrics());
 });
 
-app.get('/health', (req, res) => {
-  res.status(200).send({ status: 'ok' });
+app.get('/health', async (req, res) => {
+  try {
+    await axios.get('http://user-service:3001/health', { timeout: 1000 });
+    return res.send({ status: 'ok', deps: { userService: 'ok' }});
+  } catch (e) {
+    return res.status(503).send({ status: 'degraded', deps: { userService: 'down' }});
+  }
 });
+
 
 app.listen(port, () => {
   console.log(`User service running on port ${port}`);

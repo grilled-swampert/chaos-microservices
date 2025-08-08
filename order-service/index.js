@@ -1,7 +1,12 @@
 const express = require('express');
 const axios = require('axios');
+const metricsMiddleware = require('./metricsMiddleware');
+const client = require('./metrics').client;
+
 const app = express();
 app.use(express.json());
+app.use(metricsMiddleware);
+
 const port = process.env.PORT || 3002;
 
 let orders = [];
@@ -22,14 +27,20 @@ app.get('/orders', (req, res) => {
   res.send(orders);
 });
 
-app.get('/metrics', (req, res) => {
-  res.set('Content-Type', 'text/plain');
-  res.send(`dummy_order_metric 1`);
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType);
+  res.send(await client.register.metrics());
 });
 
-app.get('/health', (req, res) => {
-  res.status(200).send({ status: 'ok' });
+app.get('/health', async (req, res) => {
+  try {
+    await axios.get('http://order-service:3002/health', { timeout: 1000 });
+    return res.send({ status: 'ok', deps: { orderService: 'ok' }});
+  } catch (e) {
+    return res.status(503).send({ status: 'degraded', deps: { orderService: 'down' }});
+  }
 });
+
 
 
 app.listen(port, () => {
