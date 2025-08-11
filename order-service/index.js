@@ -38,24 +38,26 @@ app.use((req, res, next) => {
 });
 
 app.post('/orders', async (req, res) => {
-  const { userId, product } = req.body;
+  const { userId, product, amount } = req.body;
   
   // Validate required fields
-  if (!userId || !product) {
+  if (!userId || !product || !amount) {
     logger.warn('Order creation request missing required fields', {
       route: '/orders',
       userId: userId || 'missing',
       product: product || 'missing',
+      amount: amount || 'missing',
       requestBody: req.body
     });
     return res.status(400).send({ 
-      error: 'Missing required fields: userId and product are required' 
+      error: 'Missing required fields: userId, product, and amount are required' 
     });
   }
 
   logger.info('Creating new order', {
     userId,
     product: typeof product === 'object' ? product.name || 'unnamed' : product,
+    amount,
     route: '/orders'
   });
 
@@ -81,6 +83,7 @@ app.post('/orders', async (req, res) => {
       id: orders.length + 1, 
       user: user.data, 
       product,
+      amount: parseFloat(amount),
       createdAt: new Date().toISOString(),
       status: 'pending'
     };
@@ -92,6 +95,7 @@ app.post('/orders', async (req, res) => {
       userId,
       userName: user.data.name,
       product: typeof product === 'object' ? product.name || 'unnamed' : product,
+      amount: order.amount,
       totalOrders: orders.length
     });
 
@@ -101,6 +105,7 @@ app.post('/orders', async (req, res) => {
       route: '/orders',
       userId,
       product,
+      amount,
       userServiceUrl: `http://user-service:3001/users/${userId}`,
       errorType: 'user_service_error'
     });
@@ -146,7 +151,6 @@ app.get('/orders', (req, res) => {
     method: 'GET'
   });
 
-  // Add some useful filtering options
   const { userId, status, limit } = req.query;
   let filteredOrders = [...orders];
 
@@ -190,62 +194,6 @@ app.get('/orders', (req, res) => {
   });
 });
 
-app.get('/metrics', async (req, res) => {
-  logger.debug('Metrics endpoint accessed');
-  
-  try {
-    const metrics = await client.register.metrics();
-    res.set('Content-Type', client.register.contentType);
-    res.send(metrics);
-    
-    logger.info('Metrics served successfully');
-  } catch (error) {
-    logger.logError(error, {
-      endpoint: '/metrics',
-      message: 'Failed to retrieve metrics'
-    });
-    res.status(500).send({ error: 'Failed to retrieve metrics' });
-  }
-});
-
-app.get('/health', async (req, res) => {
-  logger.debug('Health check initiated');
-  
-  try {
-    const healthCheckStart = Date.now();
-    await axios.get('http://order-service:3002/health', { timeout: 1000 });
-    const healthCheckDuration = Date.now() - healthCheckStart;
-    
-    logger.info('Health check successful', {
-      endpoint: '/health',
-      dependencyCheck: 'order-service:3002',
-      responseTime: `${healthCheckDuration}ms`,
-      ordersInMemory: orders.length
-    });
-    
-    return res.send({ 
-      status: 'ok', 
-      deps: { orderService: 'ok' },
-      ordersCount: orders.length
-    });
-  } catch (error) {
-    logger.warn('Health check failed - service degraded', {
-      endpoint: '/health',
-      dependencyCheck: 'order-service:3002',
-      error: error.message,
-      errorCode: error.code,
-      timeout: '1000ms'
-    });
-    
-    return res.status(503).send({ 
-      status: 'degraded', 
-      deps: { orderService: 'down' },
-      ordersCount: orders.length
-    });
-  }
-});
-
-// Additional endpoint to get order by ID
 app.get('/orders/:id', (req, res) => {
   const orderId = parseInt(req.params.id);
   
@@ -279,6 +227,255 @@ app.get('/orders/:id', (req, res) => {
   });
 
   res.send(order);
+});
+
+// NEW: Process payment for an order
+app.post('/orders/:id/pay', async (req, res) => {
+  const orderId = parseInt(req.params.id);
+  
+  logger.info('Processing payment for order', {
+    orderId,
+    route: '/orders/:id/pay'
+  });
+
+  if (isNaN(orderId)) {
+    logger.warn('Invalid order ID for payment', {
+      providedId: req.params.id
+    });
+    return res.status(400).send({ error: 'Invalid order ID' });
+  }
+
+  const order = orders.find(o => o.id === orderId);
+
+  if (!order) {
+    logger.warn('Order not found for payment', {
+      orderId
+    });
+    return res.status(404).send({ error: 'Order not found' });
+  }
+
+  if (order.status === 'paid') {
+    logger.warn('Order already paid', {
+      orderId,
+      currentStatus: order.status
+    });
+    return res.status(400).send({ error: 'Order already paid' });
+  }
+
+  try {
+    // Call payment service
+    const paymentStart = Date.now();
+    const paymentResponse = await axios.post('http://payment-service:3003/pay', {
+      orderId: orderId,
+      amount: order.amount,
+      userId: order.user.id
+    }, { timeout: 10000 });
+
+    const paymentDuration = Date.now() - paymentStart;
+    
+    // Update order status
+    order.status = 'paid';
+    order.paymentDetails = paymentResponse.data;
+    order.paidAt = new Date().toISOString();
+
+    logger.info('Order payment processed successfully', {
+      orderId,
+      transactionId: paymentResponse.data.transactionId,
+      amount: order.amount,
+      paymentServiceResponseTime: `${paymentDuration}ms`
+    });
+
+    res.send({
+      order,
+      payment: paymentResponse.data
+    });
+
+  } catch (err) {
+    logger.logError(err, {
+      route: '/orders/:id/pay',
+      orderId,
+      amount: order.amount,
+      errorType: 'payment_service_error'
+    });
+
+    if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND') {
+      return res.status(503).send({ 
+        error: 'Payment service unavailable. Please try again later.' 
+      });
+    } else if (err.code === 'ECONNABORTED') {
+      return res.status(504).send({ 
+        error: 'Payment service request timed out' 
+      });
+    }
+
+    res.status(500).send({ 
+      error: 'Failed to process payment' 
+    });
+  }
+});
+
+// NEW: Get order analytics with user demographics
+app.get('/analytics/orders', async (req, res) => {
+  logger.info('Generating order analytics', {
+    route: '/analytics/orders'
+  });
+
+  try {
+    // Get user demographics for analytics
+    const userPromises = orders.map(order => 
+      axios.get(`http://user-service:3001/users/${order.user.id}/profile`, {
+        timeout: 3000
+      }).catch(err => {
+        logger.warn('Failed to fetch user profile for analytics', {
+          userId: order.user.id,
+          error: err.message
+        });
+        return { data: { demographics: 'unknown' } };
+      })
+    );
+
+    const userProfiles = await Promise.all(userPromises);
+
+    const analytics = {
+      totalOrders: orders.length,
+      ordersByStatus: orders.reduce((acc, order) => {
+        acc[order.status] = (acc[order.status] || 0) + 1;
+        return acc;
+      }, {}),
+      totalRevenue: orders.filter(o => o.status === 'paid').reduce((sum, o) => sum + o.amount, 0),
+      averageOrderValue: orders.length > 0 ? orders.reduce((sum, o) => sum + o.amount, 0) / orders.length : 0,
+      userDemographics: userProfiles.map(p => p.data.demographics || 'unknown'),
+      generatedAt: new Date().toISOString()
+    };
+
+    logger.info('Order analytics generated successfully', {
+      totalOrders: analytics.totalOrders,
+      totalRevenue: analytics.totalRevenue
+    });
+
+    res.send(analytics);
+
+  } catch (err) {
+    logger.logError(err, {
+      route: '/analytics/orders',
+      errorType: 'analytics_generation_error'
+    });
+
+    res.status(500).send({
+      error: 'Failed to generate analytics'
+    });
+  }
+});
+
+// NEW: Cancel order endpoint
+app.delete('/orders/:id', async (req, res) => {
+  const orderId = parseInt(req.params.id);
+  
+  logger.info('Cancelling order', {
+    orderId,
+    route: 'DELETE /orders/:id'
+  });
+
+  if (isNaN(orderId)) {
+    return res.status(400).send({ error: 'Invalid order ID' });
+  }
+
+  const orderIndex = orders.findIndex(o => o.id === orderId);
+  if (orderIndex === -1) {
+    return res.status(404).send({ error: 'Order not found' });
+  }
+
+  const order = orders[orderIndex];
+  if (order.status === 'paid') {
+    try {
+      // Notify payment service about refund
+      await axios.post('http://payment-service:3003/refund', {
+        transactionId: order.paymentDetails?.transactionId,
+        amount: order.amount
+      }, { timeout: 5000 });
+      
+      logger.info('Refund processed for cancelled order', {
+        orderId,
+        transactionId: order.paymentDetails?.transactionId
+      });
+    } catch (err) {
+      logger.error('Failed to process refund', {
+        orderId,
+        error: err.message
+      });
+    }
+  }
+
+  orders.splice(orderIndex, 1);
+  
+  logger.info('Order cancelled successfully', {
+    orderId,
+    previousStatus: order.status
+  });
+
+  res.send({ message: 'Order cancelled successfully', cancelledOrder: order });
+});
+
+app.get('/metrics', async (req, res) => {
+  logger.debug('Metrics endpoint accessed');
+  
+  try {
+    const metrics = await client.register.metrics();
+    res.set('Content-Type', client.register.contentType);
+    res.send(metrics);
+    
+    logger.info('Metrics served successfully');
+  } catch (error) {
+    logger.logError(error, {
+      endpoint: '/metrics',
+      message: 'Failed to retrieve metrics'
+    });
+    res.status(500).send({ error: 'Failed to retrieve metrics' });
+  }
+});
+
+app.get('/health', async (req, res) => {
+  logger.debug('Health check initiated');
+  
+  try {
+    const checks = await Promise.allSettled([
+      axios.get('http://user-service:3001/health', { timeout: 1000 }),
+      axios.get('http://payment-service:3003/health', { timeout: 1000 })
+    ]);
+
+    const userServiceOk = checks[0].status === 'fulfilled';
+    const paymentServiceOk = checks[1].status === 'fulfilled';
+    
+    const allServicesOk = userServiceOk && paymentServiceOk;
+    
+    logger.info('Health check completed', {
+      endpoint: '/health',
+      userService: userServiceOk ? 'ok' : 'down',
+      paymentService: paymentServiceOk ? 'ok' : 'down',
+      ordersInMemory: orders.length
+    });
+    
+    const status = allServicesOk ? 200 : 503;
+    res.status(status).send({ 
+      status: allServicesOk ? 'ok' : 'degraded',
+      deps: { 
+        userService: userServiceOk ? 'ok' : 'down',
+        paymentService: paymentServiceOk ? 'ok' : 'down'
+      },
+      ordersCount: orders.length
+    });
+  } catch (error) {
+    logger.warn('Health check failed', {
+      endpoint: '/health',
+      error: error.message
+    });
+    
+    res.status(503).send({ 
+      status: 'down',
+      deps: { userService: 'unknown', paymentService: 'unknown' },
+      ordersCount: orders.length
+    });
+  }
 });
 
 // Error handling middleware

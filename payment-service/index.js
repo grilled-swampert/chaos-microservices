@@ -14,6 +14,9 @@ app.use(morgan('combined', {
 
 const port = process.env.PORT || 3003;
 
+let transactions = [];
+let refunds = [];
+
 // Middleware to log every request
 app.use((req, res, next) => {
   const startTime = Date.now();
@@ -35,8 +38,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/pay', (req, res) => {
-  const { orderId, amount } = req.body;
+app.post('/pay', async (req, res) => {
+  const { orderId, amount, userId } = req.body;
   
   // Validate required fields
   if (!orderId || !amount) {
@@ -44,6 +47,7 @@ app.post('/pay', (req, res) => {
       route: '/pay',
       orderId: orderId || 'missing',
       amount: amount || 'missing',
+      userId: userId || 'missing',
       requestBody: req.body
     });
     return res.status(400).send({ 
@@ -68,34 +72,349 @@ app.post('/pay', (req, res) => {
   logger.info('Processing payment', {
     orderId,
     amount: numericAmount,
+    userId,
     currency: '₹',
     route: '/pay'
   });
 
-  // Simulate payment processing time
-  const processingStart = Date.now();
+  try {
+    // NEW: Get user information for payment processing
+    let userInfo = null;
+    if (userId) {
+      try {
+        const userResponse = await axios.get(`http://user-service:3001/users/${userId}`, {
+          timeout: 3000
+        });
+        userInfo = userResponse.data;
+        logger.info('User information retrieved for payment', {
+          userId,
+          userName: userInfo.name
+        });
+      } catch (err) {
+        logger.warn('Failed to retrieve user info for payment', {
+          userId,
+          error: err.message
+        });
+      }
+    }
+
+    // Simulate payment processing time
+    const processingStart = Date.now();
+    
+    // Simulate random payment failures (5% failure rate)
+    const shouldFail = Math.random() < 0.05;
+    if (shouldFail) {
+      logger.warn('Simulated payment failure', {
+        orderId,
+        amount: numericAmount,
+        userId,
+        reason: 'insufficient_funds'
+      });
+      return res.status(402).send({
+        error: 'Payment failed: Insufficient funds',
+        orderId,
+        amount: numericAmount
+      });
+    }
+
+    const transactionId = `txn_${Date.now()}_${orderId}`;
+    const paymentResult = { 
+      status: 'paid', 
+      orderId, 
+      amount: numericAmount,
+      transactionId,
+      processedAt: new Date().toISOString(),
+      user: userInfo
+    };
+
+    // Store transaction
+    transactions.push(paymentResult);
+
+    const processingDuration = Date.now() - processingStart;
+
+    logger.info('Payment processed successfully', {
+      orderId,
+      amount: numericAmount,
+      userId,
+      userName: userInfo?.name,
+      transactionId: paymentResult.transactionId,
+      processingTime: `${processingDuration}ms`,
+      route: '/pay'
+    });
+
+    res.send(paymentResult);
+  } catch (err) {
+    logger.logError(err, {
+      route: '/pay',
+      orderId,
+      amount: numericAmount,
+      userId,
+      errorType: 'payment_processing_error'
+    });
+
+    res.status(500).send({
+      error: 'Payment processing failed',
+      orderId,
+      amount: numericAmount
+    });
+  }
+});
+
+// NEW: Refund endpoint
+app.post('/refund', async (req, res) => {
+  const { transactionId, amount, reason } = req.body;
   
-  // In a real application, this would involve actual payment processing
-  // For now, we'll simulate success
-  const paymentResult = { 
-    status: 'paid', 
-    orderId, 
-    amount: numericAmount,
-    transactionId: `txn_${Date.now()}_${orderId}`,
-    processedAt: new Date().toISOString()
-  };
+  if (!transactionId || !amount) {
+    logger.warn('Refund request missing required fields', {
+      route: '/refund',
+      transactionId: transactionId || 'missing',
+      amount: amount || 'missing',
+      requestBody: req.body
+    });
+    return res.status(400).send({ 
+      error: 'Missing required fields: transactionId and amount are required' 
+    });
+  }
 
-  const processingDuration = Date.now() - processingStart;
-
-  logger.info('Payment processed successfully', {
-    orderId,
-    amount: numericAmount,
-    transactionId: paymentResult.transactionId,
-    processingTime: `${processingDuration}ms`,
-    route: '/pay'
+  logger.info('Processing refund', {
+    transactionId,
+    amount: parseFloat(amount),
+    reason: reason || 'order_cancellation',
+    route: '/refund'
   });
 
-  res.send(paymentResult);
+  try {
+    // Find original transaction
+    const originalTransaction = transactions.find(t => t.transactionId === transactionId);
+    
+    if (!originalTransaction) {
+      logger.warn('Transaction not found for refund', {
+        transactionId,
+        availableTransactions: transactions.map(t => t.transactionId)
+      });
+      return res.status(404).send({
+        error: 'Transaction not found'
+      });
+    }
+
+    // Validate refund amount
+    const refundAmount = parseFloat(amount);
+    if (refundAmount > originalTransaction.amount) {
+      logger.warn('Refund amount exceeds original transaction', {
+        transactionId,
+        originalAmount: originalTransaction.amount,
+        refundAmount
+      });
+      return res.status(400).send({
+        error: 'Refund amount cannot exceed original transaction amount'
+      });
+    }
+
+    const refundId = `refund_${Date.now()}_${transactionId}`;
+    const refund = {
+      refundId,
+      originalTransactionId: transactionId,
+      amount: refundAmount,
+      reason: reason || 'order_cancellation',
+      processedAt: new Date().toISOString(),
+      status: 'processed'
+    };
+
+    refunds.push(refund);
+
+    logger.info('Refund processed successfully', {
+      refundId,
+      transactionId,
+      amount: refundAmount,
+      reason: refund.reason
+    });
+
+    res.send(refund);
+
+  } catch (err) {
+    logger.logError(err, {
+      route: '/refund',
+      transactionId,
+      amount,
+      errorType: 'refund_processing_error'
+    });
+
+    res.status(500).send({
+      error: 'Refund processing failed'
+    });
+  }
+});
+
+// NEW: Get payment history
+app.get('/payments', (req, res) => {
+  const { orderId, userId, status, limit } = req.query;
+  
+  logger.info('Retrieving payment history', {
+    route: '/payments',
+    totalTransactions: transactions.length,
+    filters: { orderId, userId, status, limit }
+  });
+
+  let filteredTransactions = [...transactions];
+
+  if (orderId) {
+    filteredTransactions = filteredTransactions.filter(t => t.orderId == orderId);
+  }
+
+  if (userId) {
+    filteredTransactions = filteredTransactions.filter(t => t.user?.id == userId);
+  }
+
+  if (status) {
+    filteredTransactions = filteredTransactions.filter(t => t.status === status);
+  }
+
+  if (limit) {
+    const limitNum = parseInt(limit);
+    if (!isNaN(limitNum) && limitNum > 0) {
+      filteredTransactions = filteredTransactions.slice(0, limitNum);
+    }
+  }
+
+  logger.info('Payment history retrieved', {
+    totalTransactions: transactions.length,
+    filteredTransactions: filteredTransactions.length
+  });
+
+  res.send({
+    transactions: filteredTransactions,
+    total: transactions.length,
+    filtered: filteredTransactions.length
+  });
+});
+
+// NEW: Get refund history
+app.get('/refunds', (req, res) => {
+  const { transactionId, limit } = req.query;
+  
+  logger.info('Retrieving refund history', {
+    route: '/refunds',
+    totalRefunds: refunds.length,
+    filters: { transactionId, limit }
+  });
+
+  let filteredRefunds = [...refunds];
+
+  if (transactionId) {
+    filteredRefunds = filteredRefunds.filter(r => r.originalTransactionId === transactionId);
+  }
+
+  if (limit) {
+    const limitNum = parseInt(limit);
+    if (!isNaN(limitNum) && limitNum > 0) {
+      filteredRefunds = filteredRefunds.slice(0, limitNum);
+    }
+  }
+
+  logger.info('Refund history retrieved', {
+    totalRefunds: refunds.length,
+    filteredRefunds: filteredRefunds.length
+  });
+
+  res.send({
+    refunds: filteredRefunds,
+    total: refunds.length,
+    filtered: filteredRefunds.length
+  });
+});
+
+// NEW: Payment analytics endpoint
+app.get('/analytics/payments', async (req, res) => {
+  logger.info('Generating payment analytics', {
+    route: '/analytics/payments'
+  });
+
+  try {
+    const totalRevenue = transactions.reduce((sum, t) => sum + t.amount, 0);
+    const totalRefunds = refunds.reduce((sum, r) => sum + r.amount, 0);
+    const netRevenue = totalRevenue - totalRefunds;
+
+    // Get user demographics for payment analytics
+    const userIds = [...new Set(transactions.map(t => t.user?.id).filter(Boolean))];
+    const userPromises = userIds.map(userId =>
+      axios.get(`http://user-service:3001/users/${userId}/profile`, {
+        timeout: 3000
+      }).catch(err => {
+        logger.warn('Failed to fetch user profile for payment analytics', {
+          userId,
+          error: err.message
+        });
+        return { data: { demographics: 'unknown' } };
+      })
+    );
+
+    const userProfiles = await Promise.all(userPromises);
+
+    const analytics = {
+      totalTransactions: transactions.length,
+      totalRefunds: refunds.length,
+      totalRevenue,
+      totalRefundAmount: totalRefunds,
+      netRevenue,
+      averageTransactionValue: transactions.length > 0 ? totalRevenue / transactions.length : 0,
+      successRate: transactions.length / (transactions.length + Math.ceil(transactions.length * 0.05)), // Accounting for failed payments
+      userDemographics: userProfiles.map(p => p.data.demographics || 'unknown'),
+      generatedAt: new Date().toISOString()
+    };
+
+    logger.info('Payment analytics generated successfully', {
+      totalTransactions: analytics.totalTransactions,
+      totalRevenue: analytics.totalRevenue,
+      netRevenue: analytics.netRevenue
+    });
+
+    res.send(analytics);
+
+  } catch (err) {
+    logger.logError(err, {
+      route: '/analytics/payments',
+      errorType: 'analytics_generation_error'
+    });
+
+    res.status(500).send({
+      error: 'Failed to generate payment analytics'
+    });
+  }
+});
+
+// NEW: Transaction status check
+app.get('/transactions/:id/status', (req, res) => {
+  const transactionId = req.params.id;
+  
+  logger.info('Checking transaction status', {
+    transactionId,
+    route: '/transactions/:id/status'
+  });
+
+  const transaction = transactions.find(t => t.transactionId === transactionId);
+  
+  if (!transaction) {
+    logger.warn('Transaction not found for status check', {
+      transactionId
+    });
+    return res.status(404).send({ error: 'Transaction not found' });
+  }
+
+  const relatedRefunds = refunds.filter(r => r.originalTransactionId === transactionId);
+  const totalRefunded = relatedRefunds.reduce((sum, r) => sum + r.amount, 0);
+
+  logger.info('Transaction status retrieved', {
+    transactionId,
+    status: transaction.status,
+    totalRefunded
+  });
+
+  res.send({
+    transaction,
+    refunds: relatedRefunds,
+    totalRefunded,
+    netAmount: transaction.amount - totalRefunded
+  });
 });
 
 app.get('/metrics', async (req, res) => {
@@ -121,26 +440,43 @@ app.get('/health', async (req, res) => {
   
   try {
     const healthCheckStart = Date.now();
-    await axios.get('http://payment-service:3003/health', { timeout: 1000 });
+    
+    // Check dependencies
+    const checks = await Promise.allSettled([
+      axios.get('http://user-service:3001/health', { timeout: 1000 })
+    ]);
+
+    const userServiceOk = checks[0].status === 'fulfilled';
     const healthCheckDuration = Date.now() - healthCheckStart;
     
-    logger.info('Health check successful', {
+    logger.info('Health check completed', {
       endpoint: '/health',
-      dependencyCheck: 'payment-service:3003',
-      responseTime: `${healthCheckDuration}ms`
+      userService: userServiceOk ? 'ok' : 'down',
+      responseTime: `${healthCheckDuration}ms`,
+      transactionsInMemory: transactions.length,
+      refundsInMemory: refunds.length
     });
     
-    return res.send({ status: 'ok', deps: { paymentService: 'ok' }});
+    const status = userServiceOk ? 200 : 503;
+    res.status(status).send({ 
+      status: userServiceOk ? 'ok' : 'degraded',
+      deps: { userService: userServiceOk ? 'ok' : 'down' },
+      transactionsCount: transactions.length,
+      refundsCount: refunds.length
+    });
   } catch (error) {
     logger.warn('Health check failed - service degraded', {
       endpoint: '/health',
-      dependencyCheck: 'payment-service:3003',
       error: error.message,
-      errorCode: error.code,
-      timeout: '1000ms'
+      errorCode: error.code
     });
     
-    return res.status(503).send({ status: 'degraded', deps: { paymentService: 'down' }});
+    res.status(503).send({ 
+      status: 'down',
+      deps: { userService: 'unknown' },
+      transactionsCount: transactions.length,
+      refundsCount: refunds.length
+    });
   }
 });
 
@@ -187,7 +523,9 @@ const server = app.listen(port, () => {
 // Graceful shutdown handling
 const gracefulShutdown = (signal) => {
   logger.info(`Received ${signal}, starting graceful shutdown`, {
-    service: 'payment-service'
+    service: 'payment-service',
+    transactionsInMemory: transactions.length,
+    refundsInMemory: refunds.length
   });
   
   server.close((err) => {
