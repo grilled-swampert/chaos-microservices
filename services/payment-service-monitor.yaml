@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: payment-service-monitor
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: payment-service
+  namespaceSelector:
+    matchNames:
+      - default    # Change to the namespace where your order-service is running
+  endpoints:
+    - port: http   # must match the Service's port name
+      path: /metrics
+      interval: 15s
