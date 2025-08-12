@@ -1,0 +1,152 @@
+{
+  "name": "microservices-k6-load-tests",
+  "description": "K6 load testing configuration for microservices chaos testing",
+  "version": "1.0.0",
+  "scripts": {
+    "test:user": "k6 run user-service-load-test.js",
+    "test:order": "k6 run order-service-load-test.js", 
+    "test:payment": "k6 run payment-service-load-test.js",
+    "test:comprehensive": "k6 run comprehensive-load-test.js",
+    "test:all": "./run-load-tests.sh --all",
+    "test:chaos": "./run-load-tests.sh --comprehensive --no-services-check"
+  },
+  "k6": {
+    "scenarios": {
+      "user_service_load": {
+        "executor": "ramping-vus",
+        "startVUs": 0,
+        "stages": [
+          { "duration": "2m", "target": 10 },
+          { "duration": "5m", "target": 20 },
+          { "duration": "2m", "target": 30 },
+          { "duration": "5m", "target": 30 },
+          { "duration": "2m", "target": 0 }
+        ],
+        "gracefulRampDown": "30s"
+      },
+      "order_service_load": {
+        "executor": "ramping-vus", 
+        "startVUs": 0,
+        "stages": [
+          { "duration": "2m", "target": 8 },
+          { "duration": "5m", "target": 15 },
+          { "duration": "2m", "target": 25 },
+          { "duration": "5m", "target": 25 },
+          { "duration": "2m", "target": 0 }
+        ],
+        "gracefulRampDown": "30s"
+      },
+      "payment_service_load": {
+        "executor": "ramping-vus",
+        "startVUs": 0, 
+        "stages": [
+          { "duration": "2m", "target": 5 },
+          { "duration": "5m", "target": 12 },
+          { "duration": "2m", "target": 20 },
+          { "duration": "5m", "target": 20 },
+          { "duration": "2m", "target": 0 }
+        ],
+        "gracefulRampDown": "30s"
+      },
+      "comprehensive_load": {
+        "executor": "ramping-vus",
+        "startVUs": 0,
+        "stages": [
+          { "duration": "3m", "target": 20 },
+          { "duration": "10m", "target": 40 },
+          { "duration": "2m", "target": 60 },
+          { "duration": "3m", "target": 40 },
+          { "duration": "5m", "target": 40 },
+          { "duration": "3m", "target": 0 }
+        ],
+        "gracefulRampDown": "1m"
+      },
+      "chaos_testing": {
+        "executor": "constant-vus",
+        "vus": 30,
+        "duration": "30m",
+        "gracefulStop": "1m"
+      }
+    },
+    "thresholds": {
+      "global": {
+        "http_req_duration": ["p(95)<3000"],
+        "http_req_failed": ["rate<0.2"],
+        "errors": ["rate<0.2"]
+      },
+      "user_service": {
+        "http_req_duration": ["p(95)<1000"],
+        "http_req_failed": ["rate<0.1"],
+        "errors": ["rate<0.1"]
+      },
+      "order_service": {
+        "http_req_duration": ["p(95)<2000"],
+        "http_req_failed": ["rate<0.15"],
+        "errors": ["rate<0.15"]
+      },
+      "payment_service": {
+        "http_req_duration": ["p(95)<3000"],
+        "http_req_failed": ["rate<0.1"],
+        "errors": ["rate<0.1"],
+        "payment_success": ["rate>0.85"]
+      }
+    }
+  },
+  "monitoring": {
+    "endpoints": {
+      "user_service": "http://localhost:3001",
+      "order_service": "http://localhost:3002", 
+      "payment_service": "http://localhost:3003"
+    },
+    "health_checks": {
+      "interval": "30s",
+      "timeout": "5s",
+      "retries": 3
+    },
+    "metrics": {
+      "system": ["cpu", "memory", "disk", "network"],
+      "application": ["response_time", "throughput", "error_rate", "availability"]
+    }
+  },
+  "chaos_experiments": {
+    "container_failures": {
+      "description": "Stop/kill service containers randomly",
+      "commands": [
+        "docker stop user-service",
+        "docker stop order-service", 
+        "docker stop payment-service"
+      ]
+    },
+    "network_partitions": {
+      "description": "Block network traffic between services",
+      "commands": [
+        "sudo iptables -A INPUT -p tcp --dport 3001 -j DROP",
+        "sudo iptables -A INPUT -p tcp --dport 3002 -j DROP",
+        "sudo iptables -A INPUT -p tcp --dport 3003 -j DROP"
+      ]
+    },
+    "resource_exhaustion": {
+      "description": "Limit container resources",
+      "commands": [
+        "docker update --memory=100m user-service",
+        "docker update --memory=100m order-service",
+        "docker update --memory=100m payment-service"
+      ]
+    },
+    "latency_injection": {
+      "description": "Add network delays",
+      "commands": [
+        "sudo tc qdisc add dev lo root netem delay 100ms",
+        "sudo tc qdisc add dev eth0 root netem delay 200ms 20ms"
+      ]
+    }
+  },
+  "reporting": {
+    "formats": ["json", "html", "csv"],
+    "outputs": [
+      "load-test-results/",
+      "stdout"
+    ],
+    "real_time_monitoring": true
+  }
+}
