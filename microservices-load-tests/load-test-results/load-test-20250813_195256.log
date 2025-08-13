@@ -1,0 +1,29 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: comprehensive-load-test.js
+        output: json (./load-test-results/comprehensive-20250813_195256.json)
+
+     scenarios: (100.00%) 1 scenario, 60 max VUs, 26m30s max duration (incl. graceful stop):
+              * default: Up to 60 looping VUs for 26m0s over 6 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+
+time="2025-08-13T19:53:00+05:30" level=info msg="Setting up comprehensive load test..." source=console
+
+Run       [ 100% ] setup()
+default   [   0% ]
+time="2025-08-13T19:53:01+05:30" level=info msg="Setup complete. Created 0 orders and 0 transactions." source=console
+time="2025-08-13T19:53:01+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (00m02.0s), 01/60 VUs, 0 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m00.4s/26m00.0s
+
+running (00m03.0s), 01/60 VUs, 0 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m01.4s/26m00.0s
+
+running (00m04.0s), 01/60 VUs, 0 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m02.4s/26m00.0s

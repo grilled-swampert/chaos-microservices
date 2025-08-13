@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: order-service
-          image: order-service:v2
+          image: order-service:1.0.16
           imagePullPolicy: Never
           ports:
             - containerPort: 3002
@@ -30,4 +30,3 @@ spec:
     - protocol: TCP
       port: 3002
       targetPort: 3002
-      nodePort: 30002

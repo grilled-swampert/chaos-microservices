@@ -434,27 +434,47 @@ app.get('/metrics', async (req, res) => {
   }
 });
 
-app.get('/health', async (req, res) => {
-  const checks = await Promise.allSettled([
-    axios.get('http://microservices.local/users/ready', { timeout: 3000 }),
-    axios.get('http://microservices.local/payment/ready', { timeout: 3000 })
-  ]);
+const services = {
+  userService: 'http://user-service:3001/ready',
+  paymentService: 'http://payment-service:3003/ready',
+  orderService: 'http://order-service:3002/ready' // add more as needed
+};
 
-  const statusReport = {
-    userService: checks[0].status === 'fulfilled' ? 'ok' : 'down',
-    paymentService: checks[1].status === 'fulfilled' ? 'ok' : 'down'
-  };
+
+app.get('/health', async (req, res) => {
+  const results = await Promise.allSettled(
+    Object.entries(services).map(([key, url]) =>
+      axios.get(url, { timeout: 3000 })
+        .then(() => ({ service: key, status: "ok" }))
+        .catch(err => ({
+          service: key,
+          status: 'down',
+          error: {
+            message: err.message,
+            code: err.code,
+            statusCode: err.response?.status
+          }
+        }))
+    )
+  );
+
+  const safeResults = results.map(r => r.value || r.reason);
+
+  const statusReport = Object.keys(services).reduce((acc, key, i) => {
+    acc[key] = results[i].status === "fulfilled" ? 'ok' : 'down';
+    return acc;
+  }, {});
 
   res.status(200).send({
     status: Object.values(statusReport).every(s => s === 'ok') ? 'ok' : 'partial',
+    status_results: safeResults,
+    services: statusReport,
     deps: statusReport,
     ordersCount: orders.length
   });
 });
 
-app.get('/ready', (req, res) => {
-  res.status(200).send({ status: 'ok' });
-});
+app.get('/ready', (req, res) => res.sendStatus(200));
 
 // Error handling middleware
 app.use((error, req, res, next) => {

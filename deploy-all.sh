@@ -3,13 +3,14 @@
 eval $(minikube docker-env)
 
 # Build all services
-docker build -t order-service:latest ./order-service
-docker build -t payment-service:latest ./payment-service
-docker build -t user-service:latest ./user-service
+docker build -t order-service:1.0.16 ./order-service
+docker build -t payment-service:1.0.16 ./payment-service
+docker build -t user-service:1.0.16 ./user-service
 
-# Apply Kubernetes configs
+# Apply Kubernetes manifests
 kubectl apply -f k8s/
 kubectl apply -f services/
+kubectl apply -f ingress-setup.yaml   # apply ingress
 
 # Restart deployments so they pick up new images
 kubectl rollout restart deployment -n default
