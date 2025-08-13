@@ -82,7 +82,7 @@ app.post('/pay', async (req, res) => {
     let userInfo = null;
     if (userId) {
       try {
-        const userResponse = await axios.get(`http://user-service:3001/users/${userId}`, {
+        const userResponse = await axios.get(`http://microservices.local/users/users/${userId}`, {
           timeout: 3000
         });
         userInfo = userResponse.data;
@@ -337,7 +337,7 @@ app.get('/analytics/payments', async (req, res) => {
     // Get user demographics for payment analytics
     const userIds = [...new Set(transactions.map(t => t.user?.id).filter(Boolean))];
     const userPromises = userIds.map(userId =>
-      axios.get(`http://user-service:3001/users/${userId}/profile`, {
+      axios.get(`http://microservices.local/users/users/${userId}/profile`, {
         timeout: 3000
       }).catch(err => {
         logger.warn('Failed to fetch user profile for payment analytics', {
@@ -443,7 +443,7 @@ app.get('/health', async (req, res) => {
     
     // Check dependencies
     const checks = await Promise.allSettled([
-      axios.get('http://user-service:3001/health', { timeout: 1000 })
+      axios.get('http://microservices.local/users/ready', { timeout: 1000 })
     ]);
 
     const userServiceOk = checks[0].status === 'fulfilled';
@@ -478,6 +478,10 @@ app.get('/health', async (req, res) => {
       refundsCount: refunds.length
     });
   }
+});
+
+app.get('/ready', (req, res) => {
+  res.status(200).send({ status: 'ok' });
 });
 
 // Error handling middleware

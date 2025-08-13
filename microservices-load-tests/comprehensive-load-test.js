@@ -27,9 +27,9 @@ export let options = {
   },
 };
 
-const USER_SERVICE_URL = 'http://localhost:59842';
-const ORDER_SERVICE_URL = 'http://localhost:58231';
-const PAYMENT_SERVICE_URL = 'http://localhost:58179';
+const USER_SERVICE_URL = 'http://microservices.local/users';
+const ORDER_SERVICE_URL = 'http://microservices.local/orders';
+const PAYMENT_SERVICE_URL = 'http://microservices.local/payment';
 
 // Test data
 const userIds = [1, 2, 3];

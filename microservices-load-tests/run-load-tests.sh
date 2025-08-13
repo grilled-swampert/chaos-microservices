@@ -76,14 +76,14 @@ check_services() {
     
     echo -e "${YELLOW}Checking microservices health...${NC}"
     
-    services=("59842:User" "58231:Order" "58179:Payment")
+    services=("users:User" "orders:Order" "payment:Payment")
     failed_services=()
     
     for service in "${services[@]}"; do
         port=${service%%:*}
         name=${service##*:}
         
-        if curl -sf "http://127.0.0.1:$port/health" > /dev/null 2>&1; then
+        if curl -sf "http://microservices.local/$port/health" > /dev/null 2>&1; then
             echo -e "${GREEN}✓ $name Service (port $port) is healthy${NC}"
         else
             echo -e "${RED}✗ $name Service (port $port) is not responding${NC}"

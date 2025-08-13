@@ -247,7 +247,7 @@ app.put('/users/:id/profile', async (req, res) => {
 
     // Notify other services about profile update if needed
     try {
-      await axios.post('http://order-service:3002/webhooks/user-updated', {
+      await axios.post('http://microservices.local/orders/webhooks/user-updated', {
         userId: user.id,
         changes: updates,
         timestamp: new Date().toISOString()
@@ -367,7 +367,7 @@ app.post('/users/:id/sessions', async (req, res) => {
 
     // Notify payment service about user activity for fraud detection
     try {
-      await axios.post('http://payment-service:3003/webhooks/user-activity', {
+      await axios.post('http://microservices.local/payment/webhooks/user-activity', {
         userId,
         action: 'login',
         sessionId,
@@ -418,7 +418,7 @@ app.get('/users/:id/orders', async (req, res) => {
   }
 
   try {
-    const ordersResponse = await axios.get(`http://order-service:3002/orders?userId=${userId}`, {
+    const ordersResponse = await axios.get(`http://microservices.local/orders/orders?userId=${userId}`, {
       timeout: 5000
     });
 
@@ -481,7 +481,7 @@ app.get('/users/:id/payments', async (req, res) => {
   }
 
   try {
-    const paymentsResponse = await axios.get(`http://payment-service:3003/payments?userId=${userId}`, {
+    const paymentsResponse = await axios.get(`http://microservices.local/payment/payments?userId=${userId}`, {
       timeout: 5000
     });
 
@@ -605,7 +605,7 @@ app.get('/analytics/users', async (req, res) => {
     // Get user orders for analytics
     let orderAnalytics = {};
     try {
-      const ordersResponse = await axios.get('http://order-service:3002/analytics/orders', {
+      const ordersResponse = await axios.get('http://microservices.local/orders/analytics/orders', {
         timeout: 5000
       });
       orderAnalytics = ordersResponse.data;
@@ -690,8 +690,8 @@ app.get('/health', async (req, res) => {
     
     // Check dependencies
     const checks = await Promise.allSettled([
-      axios.get('http://127.0.0.1:58231/health', { timeout: 1000 }),
-      axios.get('http://127.0.0.1:58179/health', { timeout: 1000 })
+      axios.get('http://microservices.local/orders/ready', { timeout: 5000 }),
+      axios.get('http://microservices.local/payment/ready', { timeout: 5000 })
     ]);
 
     const orderServiceOk = checks[0].status === 'fulfilled';
@@ -736,6 +736,10 @@ app.get('/health', async (req, res) => {
       sessionsCount: userSessions.length
     });
   }
+});
+
+app.get('/ready', (req, res) => {
+  res.status(200).send({ status: 'ok' });
 });
 
 // Error handling middleware

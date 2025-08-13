@@ -65,10 +65,10 @@ app.post('/orders', async (req, res) => {
     const userServiceStart = Date.now();
     logger.debug('Fetching user data from user service', { 
       userId,
-      userServiceUrl: `http://user-service:3001/users/${userId}`
+      userServiceUrl: `http://microservices.local/users/${userId}`
     });
 
-    const user = await axios.get(`http://user-service:3001/users/${userId}`, {
+    const user = await axios.get(`http://microservices.local/users/${userId}`, {
       timeout: 5000
     });
     
@@ -106,7 +106,7 @@ app.post('/orders', async (req, res) => {
       userId,
       product,
       amount,
-      userServiceUrl: `http://user-service:3001/users/${userId}`,
+      userServiceUrl: `http://microservices.local/users/${userId}`,
       errorType: 'user_service_error'
     });
 
@@ -265,7 +265,7 @@ app.post('/orders/:id/pay', async (req, res) => {
   try {
     // Call payment service
     const paymentStart = Date.now();
-    const paymentResponse = await axios.post('http://payment-service:3003/pay', {
+    const paymentResponse = await axios.post('http://microservices.local/payment/', {
       orderId: orderId,
       amount: order.amount,
       userId: order.user.id
@@ -323,7 +323,7 @@ app.get('/analytics/orders', async (req, res) => {
   try {
     // Get user demographics for analytics
     const userPromises = orders.map(order => 
-      axios.get(`http://user-service:3001/users/${order.user.id}/profile`, {
+      axios.get(`http://microservices.local/users/${order.user.id}/profile`, {
         timeout: 3000
       }).catch(err => {
         logger.warn('Failed to fetch user profile for analytics', {
@@ -389,7 +389,7 @@ app.delete('/orders/:id', async (req, res) => {
   if (order.status === 'paid') {
     try {
       // Notify payment service about refund
-      await axios.post('http://payment-service:3003/refund', {
+      await axios.post('http://microservices.local/payment/refund', {
         transactionId: order.paymentDetails?.transactionId,
         amount: order.amount
       }, { timeout: 5000 });
@@ -435,47 +435,25 @@ app.get('/metrics', async (req, res) => {
 });
 
 app.get('/health', async (req, res) => {
-  logger.debug('Health check initiated');
-  
-  try {
-    const checks = await Promise.allSettled([
-      axios.get('http://user-service:3001/health', { timeout: 1000 }),
-      axios.get('http://payment-service:3003/health', { timeout: 1000 })
-    ]);
+  const checks = await Promise.allSettled([
+    axios.get('http://microservices.local/users/ready', { timeout: 3000 }),
+    axios.get('http://microservices.local/payment/ready', { timeout: 3000 })
+  ]);
 
-    const userServiceOk = checks[0].status === 'fulfilled';
-    const paymentServiceOk = checks[1].status === 'fulfilled';
-    
-    const allServicesOk = userServiceOk && paymentServiceOk;
-    
-    logger.info('Health check completed', {
-      endpoint: '/health',
-      userService: userServiceOk ? 'ok' : 'down',
-      paymentService: paymentServiceOk ? 'ok' : 'down',
-      ordersInMemory: orders.length
-    });
-    
-    const status = allServicesOk ? 200 : 503;
-    res.status(status).send({ 
-      status: allServicesOk ? 'ok' : 'degraded',
-      deps: { 
-        userService: userServiceOk ? 'ok' : 'down',
-        paymentService: paymentServiceOk ? 'ok' : 'down'
-      },
-      ordersCount: orders.length
-    });
-  } catch (error) {
-    logger.warn('Health check failed', {
-      endpoint: '/health',
-      error: error.message
-    });
-    
-    res.status(503).send({ 
-      status: 'down',
-      deps: { userService: 'unknown', paymentService: 'unknown' },
-      ordersCount: orders.length
-    });
-  }
+  const statusReport = {
+    userService: checks[0].status === 'fulfilled' ? 'ok' : 'down',
+    paymentService: checks[1].status === 'fulfilled' ? 'ok' : 'down'
+  };
+
+  res.status(200).send({
+    status: Object.values(statusReport).every(s => s === 'ok') ? 'ok' : 'partial',
+    deps: statusReport,
+    ordersCount: orders.length
+  });
+});
+
+app.get('/ready', (req, res) => {
+  res.status(200).send({ status: 'ok' });
 });
 
 // Error handling middleware
