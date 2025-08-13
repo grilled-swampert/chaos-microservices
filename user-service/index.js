@@ -252,7 +252,7 @@ app.put("/users/:id/profile", async (req, res) => {
     // Notify other services about profile update if needed
     try {
       await axios.post(
-        "http://microservices.local/orders/webhooks/user-updated",
+        "http://order-service:3002/webhooks/user-updated",
         {
           userId: user.id,
           changes: updates,
@@ -375,7 +375,7 @@ app.post("/users/:id/sessions", async (req, res) => {
     // Notify payment service about user activity for fraud detection
     try {
       await axios.post(
-        "http://microservices.local/payment/webhooks/user-activity",
+        "http://payment-service:3003/webhooks/user-activity",
         {
           userId,
           action: "login",
@@ -429,7 +429,7 @@ app.get("/users/:id/orders", async (req, res) => {
 
   try {
     const ordersResponse = await axios.get(
-      `http://microservices.local/orders/orders?userId=${userId}`,
+      `http://order-service:3002/orders?userId=${userId}`,
       {
         timeout: 5000,
       }
@@ -494,7 +494,7 @@ app.get("/users/:id/payments", async (req, res) => {
 
   try {
     const paymentsResponse = await axios.get(
-      `http://microservices.local/payment/payments?userId=${userId}`,
+      `http://payment-service:3003/payments?userId=${userId}`,
       {
         timeout: 5000,
       }
@@ -621,7 +621,7 @@ app.get("/analytics/users", async (req, res) => {
     let orderAnalytics = {};
     try {
       const ordersResponse = await axios.get(
-        "http://microservices.local/orders/analytics/orders",
+        "http://order-service:3002/analytics/orders",
         {
           timeout: 5000,
         }

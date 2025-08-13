@@ -65,10 +65,10 @@ app.post('/orders', async (req, res) => {
     const userServiceStart = Date.now();
     logger.debug('Fetching user data from user service', { 
       userId,
-      userServiceUrl: `http://microservices.local/users/${userId}`
+      userServiceUrl: `http://user-service:3001/${userId}`
     });
 
-    const user = await axios.get(`http://microservices.local/users/${userId}`, {
+    const user = await axios.get(`http://user-service:3001/${userId}`, {
       timeout: 5000
     });
     
@@ -106,7 +106,7 @@ app.post('/orders', async (req, res) => {
       userId,
       product,
       amount,
-      userServiceUrl: `http://microservices.local/users/${userId}`,
+      userServiceUrl: `http://user-service:3001/${userId}`,
       errorType: 'user_service_error'
     });
 
@@ -265,7 +265,7 @@ app.post('/orders/:id/pay', async (req, res) => {
   try {
     // Call payment service
     const paymentStart = Date.now();
-    const paymentResponse = await axios.post('http://microservices.local/payment/', {
+    const paymentResponse = await axios.post('http://payment-service:3003/', {
       orderId: orderId,
       amount: order.amount,
       userId: order.user.id
@@ -323,7 +323,7 @@ app.get('/analytics/orders', async (req, res) => {
   try {
     // Get user demographics for analytics
     const userPromises = orders.map(order => 
-      axios.get(`http://microservices.local/users/${order.user.id}/profile`, {
+      axios.get(`http://user-service:3001/${order.user.id}/profile`, {
         timeout: 3000
       }).catch(err => {
         logger.warn('Failed to fetch user profile for analytics', {
@@ -389,7 +389,7 @@ app.delete('/orders/:id', async (req, res) => {
   if (order.status === 'paid') {
     try {
       // Notify payment service about refund
-      await axios.post('http://microservices.local/payment/refund', {
+      await axios.post('http://payment-service:3003/refund', {
         transactionId: order.paymentDetails?.transactionId,
         amount: order.amount
       }, { timeout: 5000 });

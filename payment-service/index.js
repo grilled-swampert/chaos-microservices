@@ -85,7 +85,7 @@ app.post("/pay", async (req, res) => {
     if (userId) {
       try {
         const userResponse = await axios.get(
-          `http://microservices.local/users/users/${userId}`,
+          `http://user-service:3001/users/${userId}`,
           {
             timeout: 3000,
           }
@@ -354,7 +354,7 @@ app.get("/analytics/payments", async (req, res) => {
     ];
     const userPromises = userIds.map((userId) =>
       axios
-        .get(`http://microservices.local/users/users/${userId}/profile`, {
+        .get(`http://user-service:3001/users/${userId}/profile`, {
           timeout: 3000,
         })
         .catch((err) => {
