@@ -690,8 +690,8 @@ app.get('/health', async (req, res) => {
     
     // Check dependencies
     const checks = await Promise.allSettled([
-      axios.get('http://order-service:3002/health', { timeout: 1000 }),
-      axios.get('http://payment-service:3003/health', { timeout: 1000 })
+      axios.get('http://127.0.0.1:58231/health', { timeout: 1000 }),
+      axios.get('http://127.0.0.1:58179/health', { timeout: 1000 })
     ]);
 
     const orderServiceOk = checks[0].status === 'fulfilled';

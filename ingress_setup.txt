@@ -1,0 +1,42 @@
+1. Ingress Controller Installation
+   - Installed NGINX Ingress Controller in Minikube to handle Ingress resources.
+   - Verified installation with:
+     kubectl get pods -n ingress-nginx
+
+2. Service & Deployment Setup
+   - Each microservice (user-service, order-service, payment-service) deployed with:
+     - Deployment
+     - Service of type ClusterIP
+   - Exposed ports:
+     - user-service: 3001
+     - order-service: 3002
+     - payment-service: 3003
+
+3. Ingress Resource Configuration
+   - Created 'microservices-ingress' with:
+     Host: microservices.local
+     Paths:
+       /users   -> user-service port 3001
+       /orders  -> order-service port 3002
+       /payment -> payment-service port 3003
+     - pathType: Prefix
+     - Annotation:
+       nginx.ingress.kubernetes.io/rewrite-target: /
+
+4. Host Resolution
+   - Added microservices.local to /etc/hosts pointing to Minikube IP:
+     minikube ip
+     sudo nano /etc/hosts
+     <MINIKUBE_IP> microservices.local
+
+5. Testing
+   - Apply ingress:
+     kubectl apply -f ingress-setup.yaml
+   - Verify and test:
+     kubectl get ingress
+     curl http://microservices.local/users
+     curl http://microservices.local/orders
+     curl http://microservices.local/payment
+
+Description:
+The NGINX ingress takes incoming requests for microservices.local and routes them internally to the correct service based on the URL path.

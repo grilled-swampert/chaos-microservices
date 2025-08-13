@@ -76,14 +76,14 @@ check_services() {
     
     echo -e "${YELLOW}Checking microservices health...${NC}"
     
-    services=("3001:User" "3002:Order" "3003:Payment")
+    services=("59842:User" "58231:Order" "58179:Payment")
     failed_services=()
     
     for service in "${services[@]}"; do
         port=${service%%:*}
         name=${service##*:}
         
-        if curl -sf "http://localhost:$port/health" > /dev/null 2>&1; then
+        if curl -sf "http://127.0.0.1:$port/health" > /dev/null 2>&1; then
             echo -e "${GREEN}✓ $name Service (port $port) is healthy${NC}"
         else
             echo -e "${RED}✗ $name Service (port $port) is not responding${NC}"
@@ -202,8 +202,8 @@ run_chaos_experiment_suggestions() {
     echo ""
     echo -e "${YELLOW}2. Network Partitions:${NC}"
     echo "   # Block traffic between services"
-    echo "   sudo iptables -A INPUT -p tcp --dport 3001 -j DROP"
-    echo "   sudo iptables -A INPUT -p tcp --dport 3002 -j DROP"
+    echo "   sudo iptables -A INPUT -p tcp --dport 59842 -j DROP"
+    echo "   sudo iptables -A INPUT -p tcp --dport 58179 -j DROP"
     echo ""
     echo -e "${YELLOW}3. Resource Exhaustion:${NC}"
     echo "   # Limit container memory"

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: payment-service
-          image: payment-service:latest
+          image: payment-service:v2
           imagePullPolicy: Never
           ports:
             - containerPort: 3003
@@ -30,3 +30,4 @@ spec:
     - protocol: TCP
       port: 3003
       targetPort: 3003
+      nodePort: 30003

@@ -21,7 +21,7 @@ export let options = {
   },
 };
 
-const BASE_URL = 'http://localhost:3001';
+const BASE_URL = 'http://127.0.0.1:59842';
 
 // Test data
 const userIds = [1, 2];

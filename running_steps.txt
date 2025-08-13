@@ -1,0 +1,92 @@
+1. Start the Services on Minikube
+Point kubectl to minikube and deploy services:
+minikube start --memory=4096 --cpus=4
+
+# Deploy services
+kubectl apply -f k8s/order-deployment.yaml
+kubectl apply -f k8s/payment-deployment.yaml
+kubectl apply -f k8s/user-deployment.yaml
+
+# Deploy service definitions (expose pods)
+kubectl apply -f services/
+
+Check:
+kubectl get pods
+kubectl get svc
+
+-------------------------------------
+
+2. Set Up Monitoring (Prometheus + Grafana)
+If not already deployed in this project namespace:
+kubectl create namespace monitoring
+
+# Prometheus
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/bundle.yaml
+
+# Apply your service monitor files
+kubectl apply -f services/order-service-monitor.yaml
+kubectl apply -f services/payment-service-monitor.yaml
+kubectl apply -f services/user-service-monitor.yaml
+
+# Grafana (quick setup)
+kubectl apply -f https://raw.githubusercontent.com/grafana/grafana/main/deploy/kubernetes/grafana.yaml
+
+Port-forward to view:
+kubectl port-forward svc/grafana 3000:3000 -n monitoring
+kubectl port-forward svc/prometheus 9090:9090 -n monitoring
+
+-------------------------------------
+
+3. Run Load Tests Before Chaos
+We need a baseline:
+cd microservices-load-tests
+chmod +x run-load-tests.sh
+./run-load-tests.sh
+(Or run individual test scripts like node order-service-load-test.js.)
+
+Check Grafana/Prometheus for metrics — response times, error rates, etc.
+
+-------------------------------------
+
+4. Deploy Chaos Mesh
+helm repo add chaos-mesh https://charts.chaos-mesh.org
+helm repo update
+kubectl create namespace chaos-testing
+
+helm install chaos-mesh chaos-mesh/chaos-mesh \
+  --namespace=chaos-testing \
+  --set chaosDaemon.runtime=containerd \
+  --set chaosDaemon.socketPath=/run/containerd/containerd.sock
+
+Verify:
+kubectl get pods -n chaos-testing
+
+-------------------------------------
+
+5. Run Chaos Experiments
+From your experiments/ folder:
+kubectl apply -f experiments/pod-kill-experiment.yaml
+kubectl apply -f experiments/cpu-stress-experiment.yaml
+kubectl apply -f experiments/memory-stress-experiment.yaml
+kubectl apply -f experiments/network-delay-experiment.yaml
+
+Watch:
+kubectl describe chaos <experiment-name> -n chaos-testing
+kubectl get pods
+
+-------------------------------------
+
+6. Observe and Record
+- Watch metrics in Grafana while experiments run.
+- Save screenshots of before, during, and after chaos.
+- Note recovery times.
+
+-------------------------------------
+
+7. Wrap Up Deliverables
+By the end of you should have:
+- All microservices running in Minikube
+- Load test results before chaos
+- Chaos experiment execution logs
+- Monitoring dashboards screenshots
+- Short report (running_steps.txt) of commands + observations
