@@ -1,31 +1,63 @@
-version: '3.8'
+version: "3.8"
+
 services:
-  user-service:
-    build: ./user-service
+  postgres:
+    image: postgres:15
+    container_name: ecommerce_db
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
     ports:
-      - "3001:3001"
-    container_name: user-service
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   order-service:
     build: ./order-service
+    container_name: order-service
     ports:
       - "3002:3002"
-    container_name: order-service
-    depends_on:
-      - user-service
     networks:
       - app-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      user-service:
+        condition: service_started
 
   payment-service:
     build: ./payment-service
+    container_name: payment-service
     ports:
       - "3003:3003"
-    container_name: payment-service
     networks:
       - app-network
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  postgres_data:

@@ -1,21 +1,39 @@
-# network-delay-experiment.yaml
-apiVersion: chaos-mesh.org/v1alpha1
-kind: NetworkChaos
+apiVersion: batch/v1
+kind: CronJob
 metadata:
-  name: payment-service-delay
+  name: payment-service-delay-cron
   namespace: default
 spec:
-  action: delay
-  mode: one
-  selector:
-    namespaces:
-      - default
-    labelSelectors:
-      "app": "payment-service"
-  delay:
-    latency: "2s"
-    correlation: "100"
-    jitter: "0ms"
-  duration: "2m"
-  scheduler:
-    cron: "@every 10m"
+  schedule: "*/10 * * * *"  # every 10 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: chaos-apply
+              image: bitnami/kubectl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  cat <<EOF | kubectl apply -f -
+                  apiVersion: chaos-mesh.org/v1alpha1
+                  kind: NetworkChaos
+                  metadata:
+                    name: payment-service-delay
+                    namespace: default
+                  spec:
+                    action: delay
+                    mode: one
+                    selector:
+                      namespaces:
+                        - default
+                      labelSelectors:
+                        "app": "payment-service"
+                    delay:
+                      latency: "2s"
+                      correlation: "100"
+                      jitter: "0ms"
+                    duration: "2m"
+                  EOF

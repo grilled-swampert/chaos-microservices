@@ -1,559 +1,306 @@
 const express = require('express');
+const { Pool } = require('pg');
 const axios = require('axios');
-const metricsMiddleware = require('./metricsMiddleware');
-const client = require('./metrics').client;
-const morgan = require('morgan');
-const logger = require('./logger');
 
 const app = express();
 app.use(express.json());
-app.use(metricsMiddleware);
-app.use(morgan('combined', {
-  stream: { write: (msg) => logger.http(msg.trim()) }
-}));
 
 const port = process.env.PORT || 3002;
 
-let orders = [];
+// PostgreSQL connection
+const pool = new Pool({
+  host: process.env.DB_HOST || 'postgres-service',
+  port: process.env.DB_PORT || 5432,
+  database: process.env.DB_NAME || 'ecommerce',
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || 'password',
+});
 
-// Middleware to log every request
+// Initialize database tables
+async function initDB(retries = 5) {
+  const pool = new Pool();
+  for (let i = 0; i < retries; i++) {
+    try {
+      await pool.query('SELECT 1');
+      console.log('Database connected');
+      return pool;
+    } catch (err) {
+      console.log('DB connection failed, retrying in 5s...');
+      await new Promise(res => setTimeout(res, 5000));
+    }
+  }
+  throw new Error('Could not connect to DB');
+}
+
+// Simple logging middleware
 app.use((req, res, next) => {
-  const startTime = Date.now();
-  
-  logger.info('Incoming request', {
-    method: req.method,
-    url: req.originalUrl,
-    ip: req.ip || req.connection.remoteAddress,
-    userAgent: req.get('User-Agent')
-  });
-
-  const originalEnd = res.end;
-  res.end = function(...args) {
-    const duration = Date.now() - startTime;
-    logger.logRequest(req, res, duration);
-    originalEnd.apply(this, args);
-  };
-
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
 });
 
+// Create new order
 app.post('/orders', async (req, res) => {
-  const { userId, product, amount } = req.body;
-  
-  // Validate required fields
-  if (!userId || !product || !amount) {
-    logger.warn('Order creation request missing required fields', {
-      route: '/orders',
-      userId: userId || 'missing',
-      product: product || 'missing',
-      amount: amount || 'missing',
-      requestBody: req.body
-    });
-    return res.status(400).send({ 
-      error: 'Missing required fields: userId, product, and amount are required' 
-    });
-  }
-
-  logger.info('Creating new order', {
-    userId,
-    product: typeof product === 'object' ? product.name || 'unnamed' : product,
-    amount,
-    route: '/orders'
-  });
-
   try {
-    const userServiceStart = Date.now();
-    logger.debug('Fetching user data from user service', { 
-      userId,
-      userServiceUrl: `http://user-service:3001/${userId}`
-    });
+    const { userId, product, amount } = req.body;
 
-    const user = await axios.get(`http://user-service:3001/${userId}`, {
+    // Validate required fields
+    if (!userId || !product || !amount) {
+      return res.status(400).json({
+        error: 'Missing required fields: userId, product, and amount are required'
+      });
+    }
+
+    // Get user data from user service
+    const userResponse = await axios.get(`http://user-service:3001/users/${userId}`, {
       timeout: 5000
     });
-    
-    const userServiceDuration = Date.now() - userServiceStart;
-    logger.info('User data retrieved successfully', {
-      userId,
-      userName: user.data.name,
-      userServiceResponseTime: `${userServiceDuration}ms`
-    });
 
-    const order = { 
-      id: orders.length + 1, 
-      user: user.data, 
-      product,
-      amount: parseFloat(amount),
-      createdAt: new Date().toISOString(),
-      status: 'pending'
-    };
-    
-    orders.push(order);
+    // Create order
+    const result = await pool.query(`
+      INSERT INTO orders (user_id, user_data, product, amount)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *
+    `, [userId, JSON.stringify(userResponse.data), product, parseFloat(amount)]);
 
-    logger.info('Order created successfully', {
-      orderId: order.id,
-      userId,
-      userName: user.data.name,
-      product: typeof product === 'object' ? product.name || 'unnamed' : product,
-      amount: order.amount,
-      totalOrders: orders.length
-    });
+    console.log(`Order created: ID ${result.rows[0].id} for user ${userId}`);
+    res.status(201).json(result.rows[0]);
 
-    res.status(201).send(order);
-  } catch (err) {
-    logger.logError(err, {
-      route: '/orders',
-      userId,
-      product,
-      amount,
-      userServiceUrl: `http://user-service:3001/${userId}`,
-      errorType: 'user_service_error'
-    });
-
-    // Determine specific error response based on error type
-    if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND') {
-      logger.error('User service unavailable', {
-        userId,
-        errorCode: err.code,
-        message: err.message
-      });
-      return res.status(503).send({ 
-        error: 'User service unavailable. Please try again later.' 
-      });
-    } else if (err.response?.status === 404) {
-      logger.warn('User not found', {
-        userId,
-        userServiceStatus: err.response.status
-      });
-      return res.status(404).send({ 
-        error: `User with ID ${userId} not found` 
-      });
-    } else if (err.code === 'ECONNABORTED') {
-      logger.error('User service timeout', {
-        userId,
-        timeout: '5000ms'
-      });
-      return res.status(504).send({ 
-        error: 'User service request timed out' 
-      });
+  } catch (error) {
+    if (error.response?.status === 404) {
+      return res.status(404).json({ error: `User with ID ${req.body.userId} not found` });
     }
-
-    res.status(500).send({ 
-      error: 'Failed to create order due to user service error' 
-    });
-  }
-});
-
-app.get('/orders', (req, res) => {
-  logger.info('Retrieving all orders', {
-    route: '/orders',
-    totalOrders: orders.length,
-    method: 'GET'
-  });
-
-  const { userId, status, limit } = req.query;
-  let filteredOrders = [...orders];
-
-  if (userId) {
-    filteredOrders = filteredOrders.filter(order => order.user.id == userId);
-    logger.debug('Filtered orders by userId', { 
-      userId, 
-      filteredCount: filteredOrders.length 
-    });
-  }
-
-  if (status) {
-    filteredOrders = filteredOrders.filter(order => order.status === status);
-    logger.debug('Filtered orders by status', { 
-      status, 
-      filteredCount: filteredOrders.length 
-    });
-  }
-
-  if (limit) {
-    const limitNum = parseInt(limit);
-    if (!isNaN(limitNum) && limitNum > 0) {
-      filteredOrders = filteredOrders.slice(0, limitNum);
-      logger.debug('Limited orders result', { 
-        limit: limitNum, 
-        returnedCount: filteredOrders.length 
-      });
+    if (error.code === 'ECONNREFUSED') {
+      return res.status(503).json({ error: 'User service unavailable' });
     }
+    console.error('Error creating order:', error);
+    res.status(500).json({ error: 'Failed to create order' });
   }
-
-  logger.info('Orders retrieved successfully', {
-    totalOrders: orders.length,
-    filteredOrders: filteredOrders.length,
-    filters: { userId, status, limit }
-  });
-
-  res.send({
-    orders: filteredOrders,
-    total: orders.length,
-    filtered: filteredOrders.length
-  });
 });
 
-app.get('/orders/:id', (req, res) => {
-  const orderId = parseInt(req.params.id);
-  
-  logger.info('Retrieving specific order', {
-    orderId,
-    route: '/orders/:id'
-  });
-
-  if (isNaN(orderId)) {
-    logger.warn('Invalid order ID provided', {
-      providedId: req.params.id,
-      route: '/orders/:id'
-    });
-    return res.status(400).send({ error: 'Invalid order ID' });
-  }
-
-  const order = orders.find(o => o.id === orderId);
-
-  if (!order) {
-    logger.warn('Order not found', {
-      orderId,
-      availableOrderIds: orders.map(o => o.id)
-    });
-    return res.status(404).send({ error: 'Order not found' });
-  }
-
-  logger.info('Order retrieved successfully', {
-    orderId,
-    userId: order.user.id,
-    userName: order.user.name
-  });
-
-  res.send(order);
-});
-
-// NEW: Process payment for an order
-app.post('/orders/:id/pay', async (req, res) => {
-  const orderId = parseInt(req.params.id);
-  
-  logger.info('Processing payment for order', {
-    orderId,
-    route: '/orders/:id/pay'
-  });
-
-  if (isNaN(orderId)) {
-    logger.warn('Invalid order ID for payment', {
-      providedId: req.params.id
-    });
-    return res.status(400).send({ error: 'Invalid order ID' });
-  }
-
-  const order = orders.find(o => o.id === orderId);
-
-  if (!order) {
-    logger.warn('Order not found for payment', {
-      orderId
-    });
-    return res.status(404).send({ error: 'Order not found' });
-  }
-
-  if (order.status === 'paid') {
-    logger.warn('Order already paid', {
-      orderId,
-      currentStatus: order.status
-    });
-    return res.status(400).send({ error: 'Order already paid' });
-  }
-
+// Get all orders with filtering
+app.get('/orders', async (req, res) => {
   try {
-    // Call payment service
-    const paymentStart = Date.now();
-    const paymentResponse = await axios.post('http://payment-service:3003/', {
-      orderId: orderId,
+    const { userId, status, limit = 20, offset = 0 } = req.query;
+    
+    let query = 'SELECT * FROM orders';
+    let params = [];
+    let conditions = [];
+
+    if (userId) {
+      conditions.push(`user_id = $${params.length + 1}`);
+      params.push(userId);
+    }
+
+    if (status) {
+      conditions.push(`status = $${params.length + 1}`);
+      params.push(status);
+    }
+
+    if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ');
+    }
+
+    query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    params.push(limit, offset);
+
+    const result = await pool.query(query, params);
+    
+    // Get total count for filtered results
+    let countQuery = 'SELECT COUNT(*) FROM orders';
+    if (conditions.length > 0) {
+      countQuery += ' WHERE ' + conditions.join(' AND ');
+    }
+    const countResult = await pool.query(countQuery, params.slice(0, -2)); // Remove limit and offset
+
+    res.json({
+      orders: result.rows,
+      total: parseInt(countResult.rows[0].count),
+      filtered: result.rows.length
+    });
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get order by ID
+app.get('/orders/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (isNaN(parseInt(id))) {
+      return res.status(400).json({ error: 'Invalid order ID' });
+    }
+
+    const result = await pool.query('SELECT * FROM orders WHERE id = $1', [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Process payment for order
+app.post('/orders/:id/pay', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (isNaN(parseInt(id))) {
+      return res.status(400).json({ error: 'Invalid order ID' });
+    }
+
+    // Get order
+    const orderResult = await pool.query('SELECT * FROM orders WHERE id = $1', [id]);
+    if (orderResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    const order = orderResult.rows[0];
+    
+    if (order.status === 'paid') {
+      return res.status(400).json({ error: 'Order already paid' });
+    }
+
+    // Process payment through payment service
+    const paymentResponse = await axios.post('http://payment-service:3003/pay', {
+      orderId: order.id,
       amount: order.amount,
-      userId: order.user.id
+      userId: order.user_id
     }, { timeout: 10000 });
 
-    const paymentDuration = Date.now() - paymentStart;
-    
     // Update order status
-    order.status = 'paid';
-    order.paymentDetails = paymentResponse.data;
-    order.paidAt = new Date().toISOString();
+    const updateResult = await pool.query(`
+      UPDATE orders 
+      SET status = 'paid', 
+          payment_details = $2, 
+          paid_at = NOW()
+      WHERE id = $1
+      RETURNING *
+    `, [id, JSON.stringify(paymentResponse.data)]);
 
-    logger.info('Order payment processed successfully', {
-      orderId,
-      transactionId: paymentResponse.data.transactionId,
-      amount: order.amount,
-      paymentServiceResponseTime: `${paymentDuration}ms`
-    });
-
-    res.send({
-      order,
+    console.log(`Order ${id} payment processed successfully`);
+    
+    res.json({
+      order: updateResult.rows[0],
       payment: paymentResponse.data
     });
 
-  } catch (err) {
-    logger.logError(err, {
-      route: '/orders/:id/pay',
-      orderId,
-      amount: order.amount,
-      errorType: 'payment_service_error'
-    });
-
-    if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND') {
-      return res.status(503).send({ 
-        error: 'Payment service unavailable. Please try again later.' 
-      });
-    } else if (err.code === 'ECONNABORTED') {
-      return res.status(504).send({ 
-        error: 'Payment service request timed out' 
-      });
+  } catch (error) {
+    if (error.response?.status === 402) {
+      return res.status(402).json({ error: 'Payment failed: ' + error.response.data.error });
     }
-
-    res.status(500).send({ 
-      error: 'Failed to process payment' 
-    });
+    if (error.code === 'ECONNREFUSED') {
+      return res.status(503).json({ error: 'Payment service unavailable' });
+    }
+    console.error('Error processing payment:', error);
+    res.status(500).json({ error: 'Failed to process payment' });
   }
 });
 
-// NEW: Get order analytics with user demographics
-app.get('/analytics/orders', async (req, res) => {
-  logger.info('Generating order analytics', {
-    route: '/analytics/orders'
-  });
-
+// Cancel order
+app.delete('/orders/:id', async (req, res) => {
   try {
-    // Get user demographics for analytics
-    const userPromises = orders.map(order => 
-      axios.get(`http://user-service:3001/${order.user.id}/profile`, {
-        timeout: 3000
-      }).catch(err => {
-        logger.warn('Failed to fetch user profile for analytics', {
-          userId: order.user.id,
-          error: err.message
-        });
-        return { data: { demographics: 'unknown' } };
-      })
-    );
+    const { id } = req.params;
+    
+    if (isNaN(parseInt(id))) {
+      return res.status(400).json({ error: 'Invalid order ID' });
+    }
 
-    const userProfiles = await Promise.all(userPromises);
+    // Get order
+    const orderResult = await pool.query('SELECT * FROM orders WHERE id = $1', [id]);
+    if (orderResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    const order = orderResult.rows[0];
+
+    // If order was paid, process refund
+    if (order.status === 'paid' && order.payment_details) {
+      try {
+        await axios.post('http://payment-service:3003/refund', {
+          transactionId: JSON.parse(order.payment_details).transactionId,
+          amount: order.amount,
+          reason: 'order_cancellation'
+        }, { timeout: 5000 });
+        console.log(`Refund processed for cancelled order ${id}`);
+      } catch (error) {
+        console.error('Failed to process refund:', error);
+      }
+    }
+
+    // Delete order
+    await pool.query('DELETE FROM orders WHERE id = $1', [id]);
+    
+    console.log(`Order ${id} cancelled successfully`);
+    res.json({ message: 'Order cancelled successfully', cancelledOrder: order });
+
+  } catch (error) {
+    console.error('Error cancelling order:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Order analytics
+app.get('/analytics/orders', async (req, res) => {
+  try {
+    const totalOrdersResult = await pool.query('SELECT COUNT(*) FROM orders');
+    const statusResult = await pool.query(`
+      SELECT status, COUNT(*) as count, SUM(amount) as revenue
+      FROM orders 
+      GROUP BY status
+    `);
+    const avgResult = await pool.query('SELECT AVG(amount) as avg_order_value FROM orders');
 
     const analytics = {
-      totalOrders: orders.length,
-      ordersByStatus: orders.reduce((acc, order) => {
-        acc[order.status] = (acc[order.status] || 0) + 1;
-        return acc;
-      }, {}),
-      totalRevenue: orders.filter(o => o.status === 'paid').reduce((sum, o) => sum + o.amount, 0),
-      averageOrderValue: orders.length > 0 ? orders.reduce((sum, o) => sum + o.amount, 0) / orders.length : 0,
-      userDemographics: userProfiles.map(p => p.data.demographics || 'unknown'),
+      totalOrders: parseInt(totalOrdersResult.rows[0].count),
+      ordersByStatus: {},
+      totalRevenue: 0,
+      averageOrderValue: parseFloat(avgResult.rows[0].avg_order_value) || 0,
       generatedAt: new Date().toISOString()
     };
 
-    logger.info('Order analytics generated successfully', {
-      totalOrders: analytics.totalOrders,
-      totalRevenue: analytics.totalRevenue
+    statusResult.rows.forEach(row => {
+      analytics.ordersByStatus[row.status] = parseInt(row.count);
+      if (row.status === 'paid') {
+        analytics.totalRevenue = parseFloat(row.revenue) || 0;
+      }
     });
 
-    res.send(analytics);
-
-  } catch (err) {
-    logger.logError(err, {
-      route: '/analytics/orders',
-      errorType: 'analytics_generation_error'
-    });
-
-    res.status(500).send({
-      error: 'Failed to generate analytics'
-    });
-  }
-});
-
-// NEW: Cancel order endpoint
-app.delete('/orders/:id', async (req, res) => {
-  const orderId = parseInt(req.params.id);
-  
-  logger.info('Cancelling order', {
-    orderId,
-    route: 'DELETE /orders/:id'
-  });
-
-  if (isNaN(orderId)) {
-    return res.status(400).send({ error: 'Invalid order ID' });
-  }
-
-  const orderIndex = orders.findIndex(o => o.id === orderId);
-  if (orderIndex === -1) {
-    return res.status(404).send({ error: 'Order not found' });
-  }
-
-  const order = orders[orderIndex];
-  if (order.status === 'paid') {
-    try {
-      // Notify payment service about refund
-      await axios.post('http://payment-service:3003/refund', {
-        transactionId: order.paymentDetails?.transactionId,
-        amount: order.amount
-      }, { timeout: 5000 });
-      
-      logger.info('Refund processed for cancelled order', {
-        orderId,
-        transactionId: order.paymentDetails?.transactionId
-      });
-    } catch (err) {
-      logger.error('Failed to process refund', {
-        orderId,
-        error: err.message
-      });
-    }
-  }
-
-  orders.splice(orderIndex, 1);
-  
-  logger.info('Order cancelled successfully', {
-    orderId,
-    previousStatus: order.status
-  });
-
-  res.send({ message: 'Order cancelled successfully', cancelledOrder: order });
-});
-
-app.get('/metrics', async (req, res) => {
-  logger.debug('Metrics endpoint accessed');
-  
-  try {
-    const metrics = await client.register.metrics();
-    res.set('Content-Type', client.register.contentType);
-    res.send(metrics);
-    
-    logger.info('Metrics served successfully');
+    res.json(analytics);
   } catch (error) {
-    logger.logError(error, {
-      endpoint: '/metrics',
-      message: 'Failed to retrieve metrics'
-    });
-    res.status(500).send({ error: 'Failed to retrieve metrics' });
+    console.error('Error generating analytics:', error);
+    res.status(500).json({ error: 'Failed to generate analytics' });
   }
 });
 
-const services = {
-  userService: 'http://user-service:3001/ready',
-  paymentService: 'http://payment-service:3003/ready',
-  orderService: 'http://order-service:3002/ready' // add more as needed
-};
-
-
+// Health check
 app.get('/health', async (req, res) => {
-  const results = await Promise.allSettled(
-    Object.entries(services).map(([key, url]) =>
-      axios.get(url, { timeout: 3000 })
-        .then(() => ({ service: key, status: "ok" }))
-        .catch(err => ({
-          service: key,
-          status: 'down',
-          error: {
-            message: err.message,
-            code: err.code,
-            statusCode: err.response?.status
-          }
-        }))
-    )
-  );
-
-  const safeResults = results.map(r => r.value || r.reason);
-
-  const statusReport = Object.keys(services).reduce((acc, key, i) => {
-    acc[key] = results[i].status === "fulfilled" ? 'ok' : 'down';
-    return acc;
-  }, {});
-
-  res.status(200).send({
-    status: Object.values(statusReport).every(s => s === 'ok') ? 'ok' : 'partial',
-    status_results: safeResults,
-    services: statusReport,
-    deps: statusReport,
-    ordersCount: orders.length
-  });
+  try {
+    await pool.query('SELECT 1');
+    res.json({ status: 'ok', service: 'order-service' });
+  } catch (error) {
+    res.status(500).json({ status: 'error', service: 'order-service', error: 'Database connection failed' });
+  }
 });
 
 app.get('/ready', (req, res) => res.sendStatus(200));
 
-// Error handling middleware
-app.use((error, req, res, next) => {
-  logger.logError(error, {
-    method: req.method,
-    url: req.originalUrl,
-    ip: req.ip,
-    userAgent: req.get('User-Agent')
-  });
-  
-  res.status(500).send({ 
-    error: 'Internal server error',
-    requestId: req.id || 'unknown'
-  });
-});
-
-// Handle 404 routes
-app.use((req, res) => {
-  logger.warn('Route not found', {
-    method: req.method,
-    url: req.originalUrl,
-    ip: req.ip
-  });
-  
-  res.status(404).send({ 
-    error: 'Route not found',
-    method: req.method,
-    path: req.originalUrl
-  });
-});
-
-// Graceful server startup
+// Start server
 const server = app.listen(port, () => {
-  logger.info('Order service started successfully', {
-    port,
-    environment: process.env.NODE_ENV || 'development',
-    processId: process.pid,
-    service: 'order-service'
-  });
+  console.log(`Order service running on port ${port}`);
+  initDB();
 });
 
-// Graceful shutdown handling
-const gracefulShutdown = (signal) => {
-  logger.info(`Received ${signal}, starting graceful shutdown`, {
-    service: 'order-service',
-    ordersInMemory: orders.length
-  });
-  
-  server.close((err) => {
-    if (err) {
-      logger.logError(err, { context: 'Graceful shutdown failed' });
-      process.exit(1);
-    }
-    
-    logger.info('Order service closed successfully', {
-      ordersInMemory: orders.length
-    });
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('Shutting down order service...');
+  server.close(() => {
+    pool.end();
     process.exit(0);
-  });
-  
-  setTimeout(() => {
-    logger.error('Forced shutdown due to timeout');
-    process.exit(1);
-  }, 10000);
-};
-
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-
-process.on('uncaughtException', (error) => {
-  logger.logError(error, { context: 'Uncaught Exception', service: 'order-service' });
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  logger.error('Unhandled Rejection', {
-    reason: reason instanceof Error ? reason.message : reason,
-    stack: reason instanceof Error ? reason.stack : undefined,
-    promise: promise.toString(),
-    service: 'order-service'
   });
 });

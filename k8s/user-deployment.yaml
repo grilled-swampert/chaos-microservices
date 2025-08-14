@@ -14,10 +14,17 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: user-service:1.0.16
+          image: user-service:1.0.25
           imagePullPolicy: Never
           ports:
             - containerPort: 3001
+                  resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
 ---
 apiVersion: v1
 kind: Service

@@ -1,0 +1,938 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: comprehensive-load-test.js
+        output: json (./load-test-results/comprehensive-20250814_072434.json)
+
+     scenarios: (100.00%) 1 scenario, 60 max VUs, 26m30s max duration (incl. graceful stop):
+              * default: Up to 60 looping VUs for 26m0s over 6 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+
+time="2025-08-14T07:24:35+05:30" level=info msg="Setting up comprehensive load test..." source=console
+
+Run       [ 100% ] setup()
+default   [   0% ]
+time="2025-08-14T07:24:36+05:30" level=info msg="Setup complete. Created 3 orders and 0 transactions." source=console
+time="2025-08-14T07:24:36+05:30" level=info msg="Starting order management workflow for user 1" source=console
+
+running (00m02.0s), 01/60 VUs, 0 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m00.3s/26m00.0s
+time="2025-08-14T07:24:37+05:30" level=info msg="Created order 4 for user 1" source=console
+
+running (00m03.0s), 01/60 VUs, 0 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m01.3s/26m00.0s
+
+running (00m04.0s), 01/60 VUs, 0 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m02.3s/26m00.0s
+time="2025-08-14T07:24:40+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (00m05.0s), 01/60 VUs, 1 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m03.3s/26m00.0s
+
+running (00m06.0s), 01/60 VUs, 1 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m04.3s/26m00.0s
+time="2025-08-14T07:24:41+05:30" level=info msg="Created order 4 for user 2" source=console
+
+running (00m07.0s), 01/60 VUs, 1 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m05.3s/26m00.0s
+
+running (00m08.0s), 01/60 VUs, 1 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m06.3s/26m00.0s
+
+running (00m09.0s), 01/60 VUs, 1 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m07.3s/26m00.0s
+time="2025-08-14T07:24:44+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+
+running (00m10.0s), 01/60 VUs, 2 complete and 0 interrupted iterations
+default   [   1% ] 01/60 VUs  00m08.3s/26m00.0s
+time="2025-08-14T07:24:45+05:30" level=info msg="Created order 5 for user 3" source=console
+
+running (00m11.0s), 01/60 VUs, 2 complete and 0 interrupted iterations
+default   [   1% ] 01/60 VUs  00m09.3s/26m00.0s
+time="2025-08-14T07:24:46+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+
+running (00m12.0s), 02/60 VUs, 2 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m10.3s/26m00.0s
+
+running (00m13.0s), 02/60 VUs, 2 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m11.3s/26m00.0s
+
+running (00m14.0s), 02/60 VUs, 2 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m12.3s/26m00.0s
+time="2025-08-14T07:24:49+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:24:49+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+
+running (00m15.0s), 02/60 VUs, 4 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m13.3s/26m00.0s
+time="2025-08-14T07:24:50+05:30" level=info msg="Created order 6 for user 2" source=console
+
+running (00m16.0s), 02/60 VUs, 4 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m14.3s/26m00.0s
+
+running (00m17.0s), 02/60 VUs, 4 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m15.3s/26m00.0s
+
+running (00m18.0s), 02/60 VUs, 4 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m16.3s/26m00.0s
+time="2025-08-14T07:24:54+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:24:54+05:30" level=info msg="Starting payment workflow" source=console
+
+running (00m19.0s), 02/60 VUs, 6 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m17.3s/26m00.0s
+
+running (00m20.0s), 02/60 VUs, 6 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m18.3s/26m00.0s
+time="2025-08-14T07:24:55+05:30" level=info msg="Starting order management workflow for user 1" source=console
+
+running (00m21.0s), 03/60 VUs, 6 complete and 0 interrupted iterations
+default   [   1% ] 03/60 VUs  00m19.3s/26m00.0s
+time="2025-08-14T07:24:56+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:24:56+05:30" level=info msg="Created order 7 for user 1" source=console
+
+running (00m22.0s), 03/60 VUs, 7 complete and 0 interrupted iterations
+default   [   1% ] 03/60 VUs  00m20.3s/26m00.0s
+time="2025-08-14T07:24:57+05:30" level=info msg="Created order 8 for user 2" source=console
+time="2025-08-14T07:24:57+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+
+running (00m23.0s), 03/60 VUs, 8 complete and 0 interrupted iterations
+default   [   1% ] 03/60 VUs  00m21.3s/26m00.0s
+time="2025-08-14T07:24:58+05:30" level=info msg="Created order 9 for user 3" source=console
+
+running (00m24.0s), 03/60 VUs, 8 complete and 0 interrupted iterations
+default   [   1% ] 03/60 VUs  00m22.3s/26m00.0s
+time="2025-08-14T07:25:00+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+
+running (00m25.0s), 03/60 VUs, 9 complete and 0 interrupted iterations
+default   [   1% ] 03/60 VUs  00m23.3s/26m00.0s
+time="2025-08-14T07:25:00+05:30" level=info msg="Starting order management workflow for user 1" source=console
+
+running (00m26.0s), 03/60 VUs, 10 complete and 0 interrupted iterations
+default   [   2% ] 03/60 VUs  00m24.3s/26m00.0s
+time="2025-08-14T07:25:01+05:30" level=info msg="Created order 10 for user 3" source=console
+time="2025-08-14T07:25:01+05:30" level=info msg="Starting payment workflow" source=console
+
+running (00m27.0s), 03/60 VUs, 11 complete and 0 interrupted iterations
+default   [   2% ] 03/60 VUs  00m25.3s/26m00.0s
+time="2025-08-14T07:25:03+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+
+running (00m28.0s), 03/60 VUs, 12 complete and 0 interrupted iterations
+default   [   2% ] 03/60 VUs  00m26.3s/26m00.0s
+time="2025-08-14T07:25:03+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+time="2025-08-14T07:25:04+05:30" level=info msg="Created order 11 for user 3" source=console
+
+running (00m29.0s), 03/60 VUs, 13 complete and 0 interrupted iterations
+default   [   2% ] 03/60 VUs  00m27.3s/26m00.0s
+time="2025-08-14T07:25:04+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (00m30.0s), 03/60 VUs, 14 complete and 0 interrupted iterations
+default   [   2% ] 03/60 VUs  00m28.3s/26m00.0s
+time="2025-08-14T07:25:05+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:25:05+05:30" level=info msg="Created order 12 for user 1" source=console
+
+running (00m31.0s), 04/60 VUs, 14 complete and 0 interrupted iterations
+default   [   2% ] 04/60 VUs  00m29.3s/26m00.0s
+time="2025-08-14T07:25:06+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:25:06+05:30" level=info msg="Created order 13 for user 3" source=console
+
+running (00m32.0s), 04/60 VUs, 15 complete and 0 interrupted iterations
+default   [   2% ] 04/60 VUs  00m30.3s/26m00.0s
+
+running (00m33.0s), 04/60 VUs, 15 complete and 0 interrupted iterations
+default   [   2% ] 04/60 VUs  00m31.3s/26m00.0s
+time="2025-08-14T07:25:08+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:25:08+05:30" level=info msg="Starting analytics workflow" source=console
+
+running (00m34.0s), 04/60 VUs, 17 complete and 0 interrupted iterations
+default   [   2% ] 04/60 VUs  00m32.3s/26m00.0s
+time="2025-08-14T07:25:09+05:30" level=info msg="Created order 14 for user 2" source=console
+time="2025-08-14T07:25:09+05:30" level=info msg="Starting order management workflow for user 2" source=console
+
+running (00m35.0s), 04/60 VUs, 18 complete and 0 interrupted iterations
+default   [   2% ] 04/60 VUs  00m33.3s/26m00.0s
+time="2025-08-14T07:25:10+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+
+running (00m36.0s), 04/60 VUs, 19 complete and 0 interrupted iterations
+default   [   2% ] 04/60 VUs  00m34.3s/26m00.0s
+
+running (00m37.0s), 04/60 VUs, 19 complete and 0 interrupted iterations
+default   [   2% ] 04/60 VUs  00m35.3s/26m00.0s
+time="2025-08-14T07:25:12+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (00m38.0s), 04/60 VUs, 20 complete and 0 interrupted iterations
+default   [   2% ] 04/60 VUs  00m36.3s/26m00.0s
+time="2025-08-14T07:25:13+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:25:13+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:25:14+05:30" level=info msg="Created order 15 for user 1" source=console
+
+running (00m39.0s), 04/60 VUs, 22 complete and 0 interrupted iterations
+default   [   2% ] 04/60 VUs  00m37.3s/26m00.0s
+time="2025-08-14T07:25:14+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:25:14+05:30" level=info msg="Created order 16 for user 1" source=console
+
+running (00m40.0s), 05/60 VUs, 22 complete and 0 interrupted iterations
+default   [   2% ] 05/60 VUs  00m38.3s/26m00.0s
+time="2025-08-14T07:25:15+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:25:15+05:30" level=info msg="Created order 17 for user 2" source=console
+
+running (00m41.0s), 05/60 VUs, 23 complete and 0 interrupted iterations
+default   [   3% ] 05/60 VUs  00m39.3s/26m00.0s
+
+running (00m42.0s), 05/60 VUs, 23 complete and 0 interrupted iterations
+default   [   3% ] 05/60 VUs  00m40.3s/26m00.0s
+time="2025-08-14T07:25:17+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:25:17+05:30" level=info msg="Starting order management workflow for user 2" source=console
+
+running (00m43.0s), 05/60 VUs, 25 complete and 0 interrupted iterations
+default   [   3% ] 05/60 VUs  00m41.3s/26m00.0s
+
+running (00m44.0s), 05/60 VUs, 25 complete and 0 interrupted iterations
+default   [   3% ] 05/60 VUs  00m42.3s/26m00.0s
+time="2025-08-14T07:25:19+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:25:19+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:25:19+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+
+running (00m45.0s), 05/60 VUs, 28 complete and 0 interrupted iterations
+default   [   3% ] 05/60 VUs  00m43.3s/26m00.0s
+time="2025-08-14T07:25:20+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:25:20+05:30" level=info msg="Created order 18 for user 3" source=console
+time="2025-08-14T07:25:20+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+
+running (00m46.0s), 05/60 VUs, 30 complete and 0 interrupted iterations
+default   [   3% ] 05/60 VUs  00m44.3s/26m00.0s
+time="2025-08-14T07:25:21+05:30" level=info msg="Created order 19 for user 1" source=console
+time="2025-08-14T07:25:21+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+
+running (00m47.0s), 05/60 VUs, 31 complete and 0 interrupted iterations
+default   [   3% ] 05/60 VUs  00m45.3s/26m00.0s
+time="2025-08-14T07:25:22+05:30" level=info msg="Created order 20 for user 3" source=console
+time="2025-08-14T07:25:23+05:30" level=info msg="Starting payment workflow" source=console
+
+running (00m48.0s), 05/60 VUs, 32 complete and 0 interrupted iterations
+default   [   3% ] 05/60 VUs  00m46.3s/26m00.0s
+time="2025-08-14T07:25:23+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+time="2025-08-14T07:25:23+05:30" level=info msg="Starting analytics workflow" source=console
+
+running (00m49.0s), 05/60 VUs, 34 complete and 0 interrupted iterations
+default   [   3% ] 05/60 VUs  00m47.3s/26m00.0s
+time="2025-08-14T07:25:24+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:25:24+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (00m50.0s), 06/60 VUs, 35 complete and 0 interrupted iterations
+default   [   3% ] 06/60 VUs  00m48.3s/26m00.0s
+time="2025-08-14T07:25:25+05:30" level=info msg="Created order 21 for user 2" source=console
+time="2025-08-14T07:25:25+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (00m51.0s), 06/60 VUs, 36 complete and 0 interrupted iterations
+default   [   3% ] 06/60 VUs  00m49.3s/26m00.0s
+time="2025-08-14T07:25:26+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:25:26+05:30" level=info msg="Created order 22 for user 2" source=console
+
+running (00m52.0s), 06/60 VUs, 37 complete and 0 interrupted iterations
+default   [   3% ] 06/60 VUs  00m50.3s/26m00.0s
+time="2025-08-14T07:25:27+05:30" level=info msg="Created order 23 for user 3" source=console
+time="2025-08-14T07:25:27+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+
+running (00m53.0s), 06/60 VUs, 38 complete and 0 interrupted iterations
+default   [   3% ] 06/60 VUs  00m51.3s/26m00.0s
+time="2025-08-14T07:25:28+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+time="2025-08-14T07:25:28+05:30" level=info msg="Starting analytics workflow" source=console
+
+running (00m54.0s), 06/60 VUs, 40 complete and 0 interrupted iterations
+default   [   3% ] 06/60 VUs  00m52.3s/26m00.0s
+time="2025-08-14T07:25:29+05:30" level=info msg="Starting payment workflow" source=console
+
+running (00m55.0s), 06/60 VUs, 41 complete and 0 interrupted iterations
+default   [   3% ] 06/60 VUs  00m53.3s/26m00.0s
+time="2025-08-14T07:25:30+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:25:30+05:30" level=info msg="Starting order management workflow for user 2" source=console
+
+running (00m56.0s), 06/60 VUs, 43 complete and 0 interrupted iterations
+default   [   3% ] 06/60 VUs  00m54.3s/26m00.0s
+time="2025-08-14T07:25:31+05:30" level=info msg="Created order 24 for user 3" source=console
+time="2025-08-14T07:25:31+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:25:32+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (00m57.0s), 06/60 VUs, 45 complete and 0 interrupted iterations
+default   [   4% ] 06/60 VUs  00m55.3s/26m00.0s
+time="2025-08-14T07:25:32+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:25:33+05:30" level=info msg="Created order 25 for user 1" source=console
+
+running (00m58.0s), 06/60 VUs, 46 complete and 0 interrupted iterations
+default   [   4% ] 06/60 VUs  00m56.3s/26m00.0s
+time="2025-08-14T07:25:33+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:25:33+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:25:34+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (00m59.0s), 07/60 VUs, 48 complete and 0 interrupted iterations
+default   [   4% ] 07/60 VUs  00m57.3s/26m00.0s
+time="2025-08-14T07:25:34+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:25:35+05:30" level=info msg="Created order 26 for user 1" source=console
+
+running (01m00.0s), 07/60 VUs, 49 complete and 0 interrupted iterations
+default   [   4% ] 07/60 VUs  00m58.3s/26m00.0s
+time="2025-08-14T07:25:35+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:25:35+05:30" level=info msg="Created order 27 for user 2" source=console
+time="2025-08-14T07:25:36+05:30" level=info msg="Starting order management workflow for user 1" source=console
+
+running (01m01.0s), 07/60 VUs, 51 complete and 0 interrupted iterations
+default   [   4% ] 07/60 VUs  00m59.3s/26m00.0s
+time="2025-08-14T07:25:36+05:30" level=info msg="Created order 28 for user 2" source=console
+time="2025-08-14T07:25:36+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:25:36+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:25:36+05:30" level=info msg="Created order 29 for user 1" source=console
+
+running (01m02.0s), 07/60 VUs, 53 complete and 0 interrupted iterations
+default   [   4% ] 07/60 VUs  01m00.3s/26m00.0s
+time="2025-08-14T07:25:37+05:30" level=info msg="Created order 30 for user 1" source=console
+time="2025-08-14T07:25:37+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (01m03.0s), 07/60 VUs, 54 complete and 0 interrupted iterations
+default   [   4% ] 07/60 VUs  01m01.3s/26m00.0s
+time="2025-08-14T07:25:38+05:30" level=info msg="Created order 31 for user 1" source=console
+time="2025-08-14T07:25:38+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:25:38+05:30" level=info msg="Starting analytics workflow" source=console
+
+running (01m04.0s), 07/60 VUs, 56 complete and 0 interrupted iterations
+default   [   4% ] 07/60 VUs  01m02.3s/26m00.0s
+time="2025-08-14T07:25:39+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:25:39+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:25:39+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:25:39+05:30" level=info msg="Created order 32 for user 2" source=console
+
+running (01m05.0s), 07/60 VUs, 59 complete and 0 interrupted iterations
+default   [   4% ] 07/60 VUs  01m03.3s/26m00.0s
+time="2025-08-14T07:25:40+05:30" level=info msg="Created order 33 for user 3" source=console
+time="2025-08-14T07:25:40+05:30" level=info msg="Starting order management workflow for user 2" source=console
+
+running (01m06.0s), 07/60 VUs, 60 complete and 0 interrupted iterations
+default   [   4% ] 07/60 VUs  01m04.3s/26m00.0s
+time="2025-08-14T07:25:41+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:25:41+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:25:41+05:30" level=info msg="Created order 33 for user 2" source=console
+
+running (01m07.0s), 07/60 VUs, 62 complete and 0 interrupted iterations
+default   [   4% ] 07/60 VUs  01m05.3s/26m00.0s
+
+running (01m08.0s), 08/60 VUs, 62 complete and 0 interrupted iterations
+default   [   4% ] 08/60 VUs  01m06.3s/26m00.0s
+time="2025-08-14T07:25:43+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:25:43+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:25:43+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:25:44+05:30" level=info msg="Starting analytics workflow" source=console
+
+running (01m09.0s), 08/60 VUs, 65 complete and 0 interrupted iterations
+default   [   4% ] 08/60 VUs  01m07.3s/26m00.0s
+time="2025-08-14T07:25:44+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:25:44+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:25:44+05:30" level=info msg="Created order 34 for user 1" source=console
+
+running (01m10.0s), 08/60 VUs, 67 complete and 0 interrupted iterations
+default   [   4% ] 08/60 VUs  01m08.3s/26m00.0s
+time="2025-08-14T07:25:45+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:25:45+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:25:45+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:25:45+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+
+running (01m11.0s), 08/60 VUs, 71 complete and 0 interrupted iterations
+default   [   4% ] 08/60 VUs  01m09.3s/26m00.0s
+time="2025-08-14T07:25:46+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:25:46+05:30" level=info msg="Created order 35 for user 1" source=console
+time="2025-08-14T07:25:47+05:30" level=info msg="Created order 36 for user 3" source=console
+
+running (01m12.0s), 08/60 VUs, 72 complete and 0 interrupted iterations
+default   [   5% ] 08/60 VUs  01m10.3s/26m00.0s
+time="2025-08-14T07:25:47+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:25:48+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:25:48+05:30" level=info msg="Starting payment workflow" source=console
+
+running (01m13.0s), 08/60 VUs, 75 complete and 0 interrupted iterations
+default   [   5% ] 08/60 VUs  01m11.3s/26m00.0s
+time="2025-08-14T07:25:48+05:30" level=info msg="Created order 37 for user 2" source=console
+
+running (01m14.0s), 08/60 VUs, 75 complete and 0 interrupted iterations
+default   [   5% ] 08/60 VUs  01m12.3s/26m00.0s
+time="2025-08-14T07:25:49+05:30" level=info msg="Starting order management workflow for user 1" source=console
+
+running (01m15.0s), 08/60 VUs, 76 complete and 0 interrupted iterations
+default   [   5% ] 08/60 VUs  01m13.3s/26m00.0s
+time="2025-08-14T07:25:50+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:25:50+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (01m16.0s), 08/60 VUs, 78 complete and 0 interrupted iterations
+default   [   5% ] 08/60 VUs  01m14.3s/26m00.0s
+time="2025-08-14T07:25:51+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:25:51+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:25:51+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:25:51+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:25:51+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (01m17.0s), 08/60 VUs, 83 complete and 0 interrupted iterations
+default   [   5% ] 08/60 VUs  01m15.3s/26m00.0s
+time="2025-08-14T07:25:52+05:30" level=info msg="Created order 38 for user 2" source=console
+time="2025-08-14T07:25:52+05:30" level=info msg="Created order 39 for user 1" source=console
+time="2025-08-14T07:25:52+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:25:52+05:30" level=info msg="Created order 40 for user 3" source=console
+time="2025-08-14T07:25:52+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+
+running (01m18.0s), 09/60 VUs, 84 complete and 0 interrupted iterations
+default   [   5% ] 09/60 VUs  01m16.3s/26m00.0s
+time="2025-08-14T07:25:53+05:30" level=info msg="Created order 41 for user 1" source=console
+time="2025-08-14T07:25:53+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:25:53+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:25:53+05:30" level=info msg="Created order 42 for user 2" source=console
+time="2025-08-14T07:25:53+05:30" level=info msg="Created order 43 for user 3" source=console
+time="2025-08-14T07:25:54+05:30" level=info msg="Created order 44 for user 3" source=console
+
+running (01m19.0s), 09/60 VUs, 86 complete and 0 interrupted iterations
+default   [   5% ] 09/60 VUs  01m17.3s/26m00.0s
+time="2025-08-14T07:25:54+05:30" level=info msg="Created order 45 for user 2" source=console
+time="2025-08-14T07:25:54+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:25:54+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+
+running (01m20.0s), 09/60 VUs, 88 complete and 0 interrupted iterations
+default   [   5% ] 09/60 VUs  01m18.3s/26m00.0s
+time="2025-08-14T07:25:55+05:30" level=info msg="Created order 46 for user 3" source=console
+time="2025-08-14T07:25:55+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (01m21.0s), 09/60 VUs, 89 complete and 0 interrupted iterations
+default   [   5% ] 09/60 VUs  01m19.3s/26m00.0s
+time="2025-08-14T07:25:56+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:25:56+05:30" level=info msg="Created order 47 for user 1" source=console
+time="2025-08-14T07:25:56+05:30" level=info msg="Starting analytics workflow" source=console
+
+running (01m22.0s), 09/60 VUs, 91 complete and 0 interrupted iterations
+default   [   5% ] 09/60 VUs  01m20.3s/26m00.0s
+time="2025-08-14T07:25:57+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:25:57+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:25:57+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:25:57+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (01m23.0s), 09/60 VUs, 95 complete and 0 interrupted iterations
+default   [   5% ] 09/60 VUs  01m21.3s/26m00.0s
+time="2025-08-14T07:25:58+05:30" level=info msg="Created order 48 for user 3" source=console
+time="2025-08-14T07:25:58+05:30" level=info msg="Created order 49 for user 1" source=console
+time="2025-08-14T07:25:58+05:30" level=info msg="Created order 50 for user 2" source=console
+time="2025-08-14T07:25:58+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:25:59+05:30" level=info msg="Created order 51 for user 2" source=console
+
+running (01m24.0s), 09/60 VUs, 96 complete and 0 interrupted iterations
+default   [   5% ] 09/60 VUs  01m22.3s/26m00.0s
+time="2025-08-14T07:25:59+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:25:59+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (01m25.0s), 09/60 VUs, 98 complete and 0 interrupted iterations
+default   [   5% ] 09/60 VUs  01m23.3s/26m00.0s
+time="2025-08-14T07:26:00+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:26:00+05:30" level=info msg="Created order 52 for user 1" source=console
+time="2025-08-14T07:26:00+05:30" level=info msg="Starting payment workflow" source=console
+
+running (01m26.0s), 09/60 VUs, 100 complete and 0 interrupted iterations
+default   [   5% ] 09/60 VUs  01m24.3s/26m00.0s
+time="2025-08-14T07:26:01+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+time="2025-08-14T07:26:01+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:02+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:02+05:30" level=info msg="Starting order management workflow for user 2" source=console
+
+running (01m27.0s), 10/60 VUs, 103 complete and 0 interrupted iterations
+default   [   5% ] 10/60 VUs  01m25.3s/26m00.0s
+time="2025-08-14T07:26:02+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+
+running (01m28.0s), 10/60 VUs, 104 complete and 0 interrupted iterations
+default   [   6% ] 10/60 VUs  01m26.3s/26m00.0s
+time="2025-08-14T07:26:03+05:30" level=info msg="Created order 53 for user 2" source=console
+time="2025-08-14T07:26:03+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:03+05:30" level=info msg="Created order 54 for user 3" source=console
+time="2025-08-14T07:26:03+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:26:03+05:30" level=info msg="Starting order management workflow for user 3" source=console
+
+running (01m29.0s), 10/60 VUs, 107 complete and 0 interrupted iterations
+default   [   6% ] 10/60 VUs  01m27.3s/26m00.0s
+time="2025-08-14T07:26:04+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:26:04+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:04+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:04+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+
+running (01m30.0s), 10/60 VUs, 111 complete and 0 interrupted iterations
+default   [   6% ] 10/60 VUs  01m28.3s/26m00.0s
+time="2025-08-14T07:26:05+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:26:05+05:30" level=info msg="Created order 55 for user 2" source=console
+time="2025-08-14T07:26:05+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:26:05+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+
+running (01m31.0s), 10/60 VUs, 114 complete and 0 interrupted iterations
+default   [   6% ] 10/60 VUs  01m29.3s/26m00.0s
+time="2025-08-14T07:26:06+05:30" level=info msg="Created order 56 for user 2" source=console
+time="2025-08-14T07:26:06+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:06+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+
+running (01m32.0s), 10/60 VUs, 116 complete and 0 interrupted iterations
+default   [   6% ] 10/60 VUs  01m30.3s/26m00.0s
+time="2025-08-14T07:26:07+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:07+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:07+05:30" level=info msg="Created order 57 for user 1" source=console
+time="2025-08-14T07:26:07+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+
+running (01m33.0s), 10/60 VUs, 119 complete and 0 interrupted iterations
+default   [   6% ] 10/60 VUs  01m31.3s/26m00.0s
+time="2025-08-14T07:26:08+05:30" level=info msg="Created order 58 for user 3" source=console
+time="2025-08-14T07:26:08+05:30" level=info msg="Created order 59 for user 1" source=console
+time="2025-08-14T07:26:08+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:09+05:30" level=info msg="Starting order management workflow for user 2" source=console
+
+running (01m34.0s), 10/60 VUs, 121 complete and 0 interrupted iterations
+default   [   6% ] 10/60 VUs  01m32.3s/26m00.0s
+time="2025-08-14T07:26:09+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:26:09+05:30" level=info msg="Created order 60 for user 2" source=console
+time="2025-08-14T07:26:09+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+
+running (01m35.0s), 10/60 VUs, 123 complete and 0 interrupted iterations
+default   [   6% ] 10/60 VUs  01m33.3s/26m00.0s
+time="2025-08-14T07:26:10+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:10+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:10+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:26:10+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+
+running (01m36.0s), 10/60 VUs, 127 complete and 0 interrupted iterations
+default   [   6% ] 10/60 VUs  01m34.3s/26m00.0s
+time="2025-08-14T07:26:11+05:30" level=info msg="Created order 61 for user 3" source=console
+time="2025-08-14T07:26:11+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:11+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:11+05:30" level=info msg="Created order 62 for user 1" source=console
+time="2025-08-14T07:26:11+05:30" level=info msg="Starting payment workflow" source=console
+
+running (01m37.0s), 11/60 VUs, 129 complete and 0 interrupted iterations
+default   [   6% ] 11/60 VUs  01m35.3s/26m00.0s
+time="2025-08-14T07:26:12+05:30" level=info msg="Created order 63 for user 2" source=console
+time="2025-08-14T07:26:12+05:30" level=info msg="Created order 64 for user 1" source=console
+time="2025-08-14T07:26:12+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:12+05:30" level=info msg="Starting analytics workflow" source=console
+
+running (01m38.0s), 11/60 VUs, 131 complete and 0 interrupted iterations
+default   [   6% ] 11/60 VUs  01m36.3s/26m00.0s
+time="2025-08-14T07:26:13+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (01m39.0s), 11/60 VUs, 132 complete and 0 interrupted iterations
+default   [   6% ] 11/60 VUs  01m37.3s/26m00.0s
+time="2025-08-14T07:26:14+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:14+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:14+05:30" level=info msg="Created order 65 for user 2" source=console
+time="2025-08-14T07:26:14+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:15+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (01m40.0s), 11/60 VUs, 136 complete and 0 interrupted iterations
+default   [   6% ] 11/60 VUs  01m38.3s/26m00.0s
+time="2025-08-14T07:26:15+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:15+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:15+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:26:15+05:30" level=info msg="Created order 66 for user 1" source=console
+time="2025-08-14T07:26:15+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:16+05:30" level=info msg="Created order 67 for user 2" source=console
+
+running (01m41.0s), 11/60 VUs, 140 complete and 0 interrupted iterations
+default   [   6% ] 11/60 VUs  01m39.3s/26m00.0s
+time="2025-08-14T07:26:16+05:30" level=info msg="Created order 68 for user 1" source=console
+time="2025-08-14T07:26:16+05:30" level=info msg="Created order 69 for user 1" source=console
+time="2025-08-14T07:26:16+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:26:17+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (01m42.0s), 11/60 VUs, 142 complete and 0 interrupted iterations
+default   [   6% ] 11/60 VUs  01m40.3s/26m00.0s
+time="2025-08-14T07:26:17+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+time="2025-08-14T07:26:17+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+
+running (01m43.0s), 11/60 VUs, 144 complete and 0 interrupted iterations
+default   [   6% ] 11/60 VUs  01m41.3s/26m00.0s
+time="2025-08-14T07:26:18+05:30" level=info msg="Created order 69 for user 1" source=console
+time="2025-08-14T07:26:18+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:26:18+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:18+05:30" level=info msg="Starting payment workflow" source=console
+
+running (01m44.0s), 11/60 VUs, 147 complete and 0 interrupted iterations
+default   [   7% ] 11/60 VUs  01m42.3s/26m00.0s
+time="2025-08-14T07:26:19+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:19+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:19+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:26:19+05:30" level=info msg="Starting payment workflow" source=console
+
+running (01m45.0s), 11/60 VUs, 151 complete and 0 interrupted iterations
+default   [   7% ] 11/60 VUs  01m43.3s/26m00.0s
+time="2025-08-14T07:26:20+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:20+05:30" level=info msg="Created order 70 for user 3" source=console
+time="2025-08-14T07:26:20+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:20+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:21+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+
+running (01m46.0s), 12/60 VUs, 154 complete and 0 interrupted iterations
+default   [   7% ] 12/60 VUs  01m44.3s/26m00.0s
+time="2025-08-14T07:26:21+05:30" level=info msg="Created order 71 for user 3" source=console
+time="2025-08-14T07:26:21+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:21+05:30" level=info msg="Created order 72 for user 1" source=console
+time="2025-08-14T07:26:21+05:30" level=info msg="Starting order management workflow for user 3" source=console
+
+running (01m47.0s), 12/60 VUs, 156 complete and 0 interrupted iterations
+default   [   7% ] 12/60 VUs  01m45.3s/26m00.0s
+time="2025-08-14T07:26:22+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:22+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:26:22+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:22+05:30" level=info msg="Created order 73 for user 3" source=console
+
+running (01m48.0s), 12/60 VUs, 159 complete and 0 interrupted iterations
+default   [   7% ] 12/60 VUs  01m46.3s/26m00.0s
+time="2025-08-14T07:26:23+05:30" level=info msg="Created order 74 for user 1" source=console
+time="2025-08-14T07:26:23+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:23+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+
+running (01m49.0s), 12/60 VUs, 161 complete and 0 interrupted iterations
+default   [   7% ] 12/60 VUs  01m47.3s/26m00.0s
+time="2025-08-14T07:26:24+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:24+05:30" level=info msg="Created order 75 for user 2" source=console
+time="2025-08-14T07:26:24+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:24+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:26:24+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:24+05:30" level=info msg="Created order 76 for user 3" source=console
+
+running (01m50.0s), 12/60 VUs, 165 complete and 0 interrupted iterations
+default   [   7% ] 12/60 VUs  01m48.3s/26m00.0s
+time="2025-08-14T07:26:25+05:30" level=info msg="Created order 77 for user 3" source=console
+time="2025-08-14T07:26:25+05:30" level=info msg="Starting payment workflow" source=console
+
+running (01m51.0s), 12/60 VUs, 166 complete and 0 interrupted iterations
+default   [   7% ] 12/60 VUs  01m49.3s/26m00.0s
+time="2025-08-14T07:26:26+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:26:26+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:26+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:27+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+
+running (01m52.0s), 12/60 VUs, 170 complete and 0 interrupted iterations
+default   [   7% ] 12/60 VUs  01m50.3s/26m00.0s
+time="2025-08-14T07:26:27+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:26:27+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:26:27+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:28+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (01m53.0s), 12/60 VUs, 174 complete and 0 interrupted iterations
+default   [   7% ] 12/60 VUs  01m51.3s/26m00.0s
+time="2025-08-14T07:26:28+05:30" level=info msg="Created order 78 for user 1" source=console
+time="2025-08-14T07:26:28+05:30" level=info msg="Created order 79 for user 2" source=console
+time="2025-08-14T07:26:28+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:28+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:26:29+05:30" level=info msg="Created order 80 for user 2" source=console
+
+running (01m54.0s), 12/60 VUs, 176 complete and 0 interrupted iterations
+default   [   7% ] 12/60 VUs  01m52.3s/26m00.0s
+time="2025-08-14T07:26:29+05:30" level=info msg="Created order 81 for user 2" source=console
+time="2025-08-14T07:26:29+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:29+05:30" level=info msg="Created order 82 for user 3" source=console
+time="2025-08-14T07:26:29+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:29+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+time="2025-08-14T07:26:30+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+
+running (01m55.0s), 12/60 VUs, 180 complete and 0 interrupted iterations
+default   [   7% ] 12/60 VUs  01m53.3s/26m00.0s
+time="2025-08-14T07:26:30+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:30+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:31+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:26:31+05:30" level=info msg="Created order 83 for user 1" source=console
+
+running (01m56.0s), 13/60 VUs, 182 complete and 0 interrupted iterations
+default   [   7% ] 13/60 VUs  01m54.3s/26m00.0s
+time="2025-08-14T07:26:31+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:26:31+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:26:31+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:31+05:30" level=info msg="Created order 84 for user 3" source=console
+time="2025-08-14T07:26:31+05:30" level=info msg="Created order 85 for user 3" source=console
+time="2025-08-14T07:26:32+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (01m57.0s), 13/60 VUs, 186 complete and 0 interrupted iterations
+default   [   7% ] 13/60 VUs  01m55.3s/26m00.0s
+time="2025-08-14T07:26:32+05:30" level=info msg="Created order 86 for user 2" source=console
+time="2025-08-14T07:26:32+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (01m58.0s), 13/60 VUs, 187 complete and 0 interrupted iterations
+default   [   7% ] 13/60 VUs  01m56.3s/26m00.0s
+time="2025-08-14T07:26:33+05:30" level=info msg="Created order 87 for user 1" source=console
+time="2025-08-14T07:26:33+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:33+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:33+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:33+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+time="2025-08-14T07:26:34+05:30" level=info msg="Created order 88 for user 2" source=console
+time="2025-08-14T07:26:34+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (01m59.0s), 13/60 VUs, 192 complete and 0 interrupted iterations
+default   [   8% ] 13/60 VUs  01m57.3s/26m00.0s
+time="2025-08-14T07:26:34+05:30" level=info msg="Created order 89 for user 1" source=console
+time="2025-08-14T07:26:34+05:30" level=info msg="Created order 90 for user 2" source=console
+time="2025-08-14T07:26:34+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:34+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:34+05:30" level=info msg="Created order 91 for user 3" source=console
+time="2025-08-14T07:26:34+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:26:34+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (02m00.0s), 13/60 VUs, 196 complete and 0 interrupted iterations
+default   [   8% ] 13/60 VUs  01m58.3s/26m00.0s
+time="2025-08-14T07:26:35+05:30" level=info msg="Created order 92 for user 1" source=console
+time="2025-08-14T07:26:35+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:26:35+05:30" level=info msg="Created order 93 for user 3" source=console
+time="2025-08-14T07:26:35+05:30" level=info msg="Created order 94 for user 1" source=console
+time="2025-08-14T07:26:35+05:30" level=info msg="Created order 95 for user 1" source=console
+time="2025-08-14T07:26:35+05:30" level=info msg="Created order 96 for user 1" source=console
+time="2025-08-14T07:26:36+05:30" level=info msg="Starting order management workflow for user 3" source=console
+
+running (02m01.0s), 13/60 VUs, 198 complete and 0 interrupted iterations
+default   [   8% ] 13/60 VUs  01m59.3s/26m00.0s
+time="2025-08-14T07:26:36+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:36+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:36+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:36+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (02m02.0s), 13/60 VUs, 202 complete and 0 interrupted iterations
+default   [   8% ] 13/60 VUs  02m00.3s/26m00.0s
+time="2025-08-14T07:26:37+05:30" level=info msg="Created order 97 for user 3" source=console
+time="2025-08-14T07:26:37+05:30" level=info msg="Created order 98 for user 2" source=console
+time="2025-08-14T07:26:37+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:26:37+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:37+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:38+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (02m03.0s), 13/60 VUs, 206 complete and 0 interrupted iterations
+default   [   8% ] 13/60 VUs  02m01.3s/26m00.0s
+time="2025-08-14T07:26:38+05:30" level=info msg="Created order 99 for user 2" source=console
+time="2025-08-14T07:26:38+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:38+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:26:38+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:26:38+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:26:39+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+
+running (02m04.0s), 13/60 VUs, 211 complete and 0 interrupted iterations
+default   [   8% ] 13/60 VUs  02m02.3s/26m00.0s
+time="2025-08-14T07:26:39+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:26:39+05:30" level=info msg="Created order 100 for user 2" source=console
+time="2025-08-14T07:26:39+05:30" level=info msg="Created order 101 for user 1" source=console
+time="2025-08-14T07:26:39+05:30" level=info msg="Created order 102 for user 1" source=console
+time="2025-08-14T07:26:39+05:30" level=info msg="Created order 103 for user 3" source=console
+time="2025-08-14T07:26:39+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:26:40+05:30" level=info msg="Starting order management workflow for user 3" source=console
+
+running (02m05.0s), 14/60 VUs, 213 complete and 0 interrupted iterations
+default   [   8% ] 14/60 VUs  02m03.3s/26m00.0s
+time="2025-08-14T07:26:40+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:40+05:30" level=info msg="Created order 104 for user 3" source=console
+time="2025-08-14T07:26:40+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (02m06.0s), 14/60 VUs, 215 complete and 0 interrupted iterations
+default   [   8% ] 14/60 VUs  02m04.3s/26m00.0s
+time="2025-08-14T07:26:41+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:41+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+time="2025-08-14T07:26:41+05:30" level=info msg="Created order 105 for user 2" source=console
+time="2025-08-14T07:26:41+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:41+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (02m07.0s), 14/60 VUs, 219 complete and 0 interrupted iterations
+default   [   8% ] 14/60 VUs  02m05.3s/26m00.0s
+time="2025-08-14T07:26:42+05:30" level=info msg="Created order 106 for user 2" source=console
+time="2025-08-14T07:26:42+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:42+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:42+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:42+05:30" level=info msg="Created order 107 for user 2" source=console
+time="2025-08-14T07:26:42+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:42+05:30" level=info msg="Created order 108 for user 1" source=console
+
+running (02m08.0s), 14/60 VUs, 223 complete and 0 interrupted iterations
+default   [   8% ] 14/60 VUs  02m06.3s/26m00.0s
+time="2025-08-14T07:26:43+05:30" level=info msg="Created order 109 for user 2" source=console
+time="2025-08-14T07:26:43+05:30" level=info msg="Created order 110 for user 1" source=console
+time="2025-08-14T07:26:43+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:43+05:30" level=info msg="Created order 111 for user 1" source=console
+
+running (02m09.0s), 14/60 VUs, 224 complete and 0 interrupted iterations
+default   [   8% ] 14/60 VUs  02m07.3s/26m00.0s
+time="2025-08-14T07:26:44+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:26:45+05:30" level=info msg="Created order 112 for user 2" source=console
+time="2025-08-14T07:26:45+05:30" level=info msg="Starting order management workflow for user 3" source=console
+
+running (02m10.0s), 14/60 VUs, 226 complete and 0 interrupted iterations
+default   [   8% ] 14/60 VUs  02m08.3s/26m00.0s
+time="2025-08-14T07:26:45+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:45+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:26:45+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:26:45+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:45+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:26:45+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:45+05:30" level=info msg="Starting payment workflow" source=console
+
+running (02m11.0s), 14/60 VUs, 233 complete and 0 interrupted iterations
+default   [   8% ] 14/60 VUs  02m09.3s/26m00.0s
+time="2025-08-14T07:26:46+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:26:46+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:46+05:30" level=info msg="Created order 113 for user 3" source=console
+time="2025-08-14T07:26:46+05:30" level=info msg="Created order 114 for user 1" source=console
+
+running (02m12.0s), 14/60 VUs, 235 complete and 0 interrupted iterations
+default   [   8% ] 14/60 VUs  02m10.3s/26m00.0s
+time="2025-08-14T07:26:47+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:47+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+time="2025-08-14T07:26:47+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:47+05:30" level=info msg="Created order 115 for user 1" source=console
+time="2025-08-14T07:26:47+05:30" level=info msg="Created order 116 for user 2" source=console
+time="2025-08-14T07:26:47+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:48+05:30" level=info msg="Starting order management workflow for user 1" source=console
+
+running (02m13.0s), 14/60 VUs, 240 complete and 0 interrupted iterations
+default   [   8% ] 14/60 VUs  02m11.3s/26m00.0s
+time="2025-08-14T07:26:48+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:48+05:30" level=info msg="Created order 117 for user 2" source=console
+time="2025-08-14T07:26:48+05:30" level=info msg="Created order 118 for user 2" source=console
+time="2025-08-14T07:26:48+05:30" level=info msg="Created order 119 for user 1" source=console
+
+running (02m14.0s), 14/60 VUs, 241 complete and 0 interrupted iterations
+default   [   8% ] 14/60 VUs  02m12.3s/26m00.0s
+time="2025-08-14T07:26:49+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:49+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+time="2025-08-14T07:26:49+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:49+05:30" level=info msg="Created order 120 for user 3" source=console
+time="2025-08-14T07:26:50+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (02m15.0s), 15/60 VUs, 244 complete and 0 interrupted iterations
+default   [   9% ] 15/60 VUs  02m13.3s/26m00.0s
+time="2025-08-14T07:26:50+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:50+05:30" level=info msg="Created order 121 for user 1" source=console
+time="2025-08-14T07:26:50+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:50+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:50+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:51+05:30" level=info msg="Created order 122 for user 2" source=console
+
+running (02m16.0s), 15/60 VUs, 248 complete and 0 interrupted iterations
+default   [   9% ] 15/60 VUs  02m14.3s/26m00.0s
+time="2025-08-14T07:26:51+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:26:51+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:51+05:30" level=info msg="Created order 123 for user 3" source=console
+time="2025-08-14T07:26:51+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:26:51+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:26:51+05:30" level=info msg="Created order 124 for user 3" source=console
+time="2025-08-14T07:26:51+05:30" level=info msg="Created order 125 for user 1" source=console
+time="2025-08-14T07:26:51+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:26:52+05:30" level=info msg="Created order 126 for user 2" source=console
+
+running (02m17.0s), 15/60 VUs, 253 complete and 0 interrupted iterations
+default   [   9% ] 15/60 VUs  02m15.3s/26m00.0s
+time="2025-08-14T07:26:52+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:26:52+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:52+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:26:52+05:30" level=info msg="Starting analytics workflow" source=console
+
+running (02m18.0s), 15/60 VUs, 257 complete and 0 interrupted iterations
+default   [   9% ] 15/60 VUs  02m16.3s/26m00.0s
+time="2025-08-14T07:26:53+05:30" level=info msg="Created order 127 for user 3" source=console
+time="2025-08-14T07:26:53+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:26:53+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:53+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (02m19.0s), 15/60 VUs, 260 complete and 0 interrupted iterations
+default   [   9% ] 15/60 VUs  02m17.3s/26m00.0s
+time="2025-08-14T07:26:54+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:54+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:26:54+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:26:54+05:30" level=info msg="Created order 128 for user 3" source=console
+time="2025-08-14T07:26:55+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+
+running (02m20.0s), 15/60 VUs, 264 complete and 0 interrupted iterations
+default   [   9% ] 15/60 VUs  02m18.3s/26m00.0s
+time="2025-08-14T07:26:55+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:55+05:30" level=info msg="Created order 129 for user 1" source=console
+time="2025-08-14T07:26:55+05:30" level=info msg="Created order 130 for user 1" source=console
+time="2025-08-14T07:26:55+05:30" level=info msg="Created order 131 for user 2" source=console
+
+running (02m21.0s), 15/60 VUs, 265 complete and 0 interrupted iterations
+default   [   9% ] 15/60 VUs  02m19.3s/26m00.0s
+time="2025-08-14T07:26:56+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:56+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:56+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:26:56+05:30" level=info msg="Created order 132 for user 3" source=console
+
+running (02m22.0s), 15/60 VUs, 268 complete and 0 interrupted iterations
+default   [   9% ] 15/60 VUs  02m20.3s/26m00.0s
+time="2025-08-14T07:26:57+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:26:57+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:58+05:30" level=info msg="Created order 133 for user 2" source=console
+time="2025-08-14T07:26:58+05:30" level=info msg="Starting analytics workflow" source=console
+
+running (02m23.0s), 15/60 VUs, 271 complete and 0 interrupted iterations
+default   [   9% ] 15/60 VUs  02m21.3s/26m00.0s
+time="2025-08-14T07:26:58+05:30" level=info msg="Created order 134 for user 1" source=console
+time="2025-08-14T07:26:58+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:26:58+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:26:58+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+
+running (02m24.0s), 16/60 VUs, 273 complete and 0 interrupted iterations
+default   [   9% ] 16/60 VUs  02m22.3s/26m00.0s
+time="2025-08-14T07:26:59+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:26:59+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:59+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:26:59+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:26:59+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:26:59+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (02m25.0s), 16/60 VUs, 279 complete and 0 interrupted iterations
+default   [   9% ] 16/60 VUs  02m23.3s/26m00.0s
+time="2025-08-14T07:27:00+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:27:00+05:30" level=info msg="Created order 135 for user 2" source=console
+time="2025-08-14T07:27:00+05:30" level=info msg="Created order 136 for user 3" source=console
+time="2025-08-14T07:27:00+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:27:00+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:27:00+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:27:00+05:30" level=info msg="Created order 137 for user 1" source=console
+
+running (02m26.0s), 16/60 VUs, 283 complete and 0 interrupted iterations
+default   [   9% ] 16/60 VUs  02m24.3s/26m00.0s
+time="2025-08-14T07:27:01+05:30" level=info msg="Created order 138 for user 2" source=console
+time="2025-08-14T07:27:01+05:30" level=info msg="Created order 139 for user 2" source=console
+time="2025-08-14T07:27:01+05:30" level=info msg="Created order 140 for user 1" source=console
+time="2025-08-14T07:27:01+05:30" level=info msg="Created order 141 for user 3" source=console
+time="2025-08-14T07:27:01+05:30" level=info msg="Starting order management workflow for user 2" source=console
+time="2025-08-14T07:27:02+05:30" level=info msg="Starting payment workflow" source=console
+
+running (02m27.0s), 16/60 VUs, 285 complete and 0 interrupted iterations
+default   [   9% ] 16/60 VUs  02m25.3s/26m00.0s
+time="2025-08-14T07:27:02+05:30" level=info msg="Created order 141 for user 2" source=console
+time="2025-08-14T07:27:02+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:27:02+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+time="2025-08-14T07:27:03+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+
+running (02m28.0s), 16/60 VUs, 288 complete and 0 interrupted iterations
+default   [   9% ] 16/60 VUs  02m26.3s/26m00.0s
+time="2025-08-14T07:27:03+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:27:03+05:30" level=info msg="Starting browsing workflow for user 2" source=console
+time="2025-08-14T07:27:03+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:27:03+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:27:03+05:30" level=info msg="Created order 141 for user 3" source=console
+time="2025-08-14T07:27:04+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+time="2025-08-14T07:27:04+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:27:04+05:30" level=info msg="Created order 142 for user 2" source=console
+
+running (02m29.0s), 16/60 VUs, 294 complete and 0 interrupted iterations
+default   [   9% ] 16/60 VUs  02m27.3s/26m00.0s
+time="2025-08-14T07:27:04+05:30" level=info msg="Starting order management workflow for user 1" source=console
+time="2025-08-14T07:27:04+05:30" level=info msg="Created order 143 for user 2" source=console
+time="2025-08-14T07:27:04+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+time="2025-08-14T07:27:04+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:27:04+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:27:05+05:30" level=info msg="Created order 144 for user 2" source=console
+
+running (02m30.0s), 16/60 VUs, 298 complete and 0 interrupted iterations
+default   [  10% ] 16/60 VUs  02m28.3s/26m00.0s
+time="2025-08-14T07:27:05+05:30" level=info msg="Starting browsing workflow for user 1" source=console
+time="2025-08-14T07:27:05+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T07:27:05+05:30" level=info msg="Starting analytics workflow" source=console
+time="2025-08-14T07:27:05+05:30" level=info msg="Starting payment workflow" source=console
+
+running (02m31.0s), 16/60 VUs, 302 complete and 0 interrupted iterations
+default   [  10% ] 16/60 VUs  02m29.3s/26m00.0s
+time="2025-08-14T07:27:06+05:30" level=info msg="Created order 145 for user 1" source=console
+time="2025-08-14T07:27:06+05:30" level=info msg="Created order 146 for user 2" source=console
+time="2025-08-14T07:27:06+05:30" level=info msg="Starting order management workflow for user 3" source=console
+time="2025-08-14T07:27:06+05:30" level=info msg="Starting payment workflow" source=console
+time="2025-08-14T07:27:06+05:30" level=info msg="Created order 147 for user 2" source=console
