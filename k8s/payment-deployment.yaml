@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: payment-service
-          image: payment-service:1.0.27
+          image: payment-service:1.0.30
           imagePullPolicy: Never
           ports:
             - containerPort: 3003

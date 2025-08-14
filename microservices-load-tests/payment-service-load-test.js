@@ -344,28 +344,6 @@ export function setup() {
   return { initialTransactionIds: transactionIds };
 }
 
-// Webhook endpoint test (simulates external service calling payment service)
-export function testWebhookUserActivity() {
-  if (Math.random() < 0.1) { // 10% chance to test webhook
-    const payload = {
-      userId: userIds[Math.floor(Math.random() * userIds.length)],
-      action: 'login',
-      sessionId: `session_${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      ipAddress: `192.168.1.${Math.floor(Math.random() * 255)}`
-    };
-    
-    const response = http.post(`${BASE_URL}/webhooks/user-activity`, JSON.stringify(payload), {
-      headers: { 'Content-Type': 'application/json' },
-    });
-    
-    // Webhooks might not be implemented, so we're lenient with status codes
-    check(response, {
-      'webhook status is acceptable': (r) => [200, 404, 501].includes(r.status),
-    });
-  }
-}
-
 // Handle summary data
 export function handleSummary(data) {
   return {

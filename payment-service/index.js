@@ -563,6 +563,28 @@ app.get('/metrics', async (req, res) => {
   }
 });
 
+app.post('/webhooks/user-activity', async (req, res) => {
+  try {
+    const { userId, action, sessionId, timestamp, ipAddress } = req.body;
+
+    console.log(`Received user activity webhook: 
+      userId: ${userId}, 
+      action: ${action}, 
+      sessionId: ${sessionId}, 
+      timestamp: ${timestamp}, 
+      ipAddress: ${ipAddress}`
+    );
+
+    // Example: store in DB or trigger fraud detection
+    // await db.query('INSERT INTO user_activity_log (...) VALUES (...)', [...]);
+
+    res.status(200).json({ message: 'Webhook received successfully' });
+  } catch (error) {
+    console.error('Error processing webhook:', error);
+    res.status(500).json({ error: 'Failed to process webhook' });
+  }
+});
+
 // Health check with dependency checks
 const services = {
   userService: 'http://user-service:3001/ready',

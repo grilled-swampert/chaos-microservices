@@ -510,6 +510,13 @@ app.get('/metrics', async (req, res) => {
   }
 });
 
+app.post('/webhooks/user-updated', (req, res) => {
+  const { userId, changes, timestamp } = req.body;
+  console.log(`Received webhook: user ${userId} updated at ${timestamp}`, changes);
+  // Handle update logic here (e.g., update order records)
+  res.sendStatus(200);
+});
+
 // Health check with dependency checks
 const services = {
   userService: 'http://user-service:3001/ready',
