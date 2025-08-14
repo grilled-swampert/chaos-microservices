@@ -1,0 +1,73 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: comprehensive-load-test.js
+        output: json (./load-test-results/comprehensive-20250814_095009.json)
+
+     scenarios: (100.00%) 1 scenario, 60 max VUs, 26m30s max duration (incl. graceful stop):
+              * default: Up to 60 looping VUs for 26m0s over 6 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+
+time="2025-08-14T09:50:10+05:30" level=info msg="Setting up comprehensive load test..." source=console
+
+Run       [ 100% ] setup()
+default   [   0% ]
+time="2025-08-14T09:50:11+05:30" level=info msg="Setup complete. Created 0 orders and 0 transactions." source=console
+time="2025-08-14T09:50:11+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+
+running (00m02.0s), 01/60 VUs, 0 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m00.4s/26m00.0s
+
+running (00m03.0s), 01/60 VUs, 0 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m01.4s/26m00.0s
+
+running (00m04.0s), 01/60 VUs, 0 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m02.4s/26m00.0s
+time="2025-08-14T09:50:14+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+
+running (00m05.0s), 01/60 VUs, 1 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m03.4s/26m00.0s
+time="2025-08-14T09:50:15+05:30" level=info msg="Starting browsing workflow for user 3" source=console
+
+running (00m06.0s), 01/60 VUs, 2 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m04.4s/26m00.0s
+
+running (00m07.0s), 01/60 VUs, 2 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m05.4s/26m00.0s
+
+running (00m08.0s), 01/60 VUs, 2 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m06.4s/26m00.0s
+time="2025-08-14T09:50:18+05:30" level=info msg="Starting complete purchase workflow for user 3" source=console
+
+running (00m09.0s), 01/60 VUs, 3 complete and 0 interrupted iterations
+default   [   0% ] 01/60 VUs  00m07.4s/26m00.0s
+
+running (00m10.0s), 01/60 VUs, 3 complete and 0 interrupted iterations
+default   [   1% ] 01/60 VUs  00m08.4s/26m00.0s
+
+running (00m11.0s), 01/60 VUs, 3 complete and 0 interrupted iterations
+default   [   1% ] 01/60 VUs  00m09.4s/26m00.0s
+time="2025-08-14T09:50:21+05:30" level=info msg="Starting complete purchase workflow for user 2" source=console
+time="2025-08-14T09:50:21+05:30" level=info msg="Starting order management workflow for user 2" source=console
+
+running (00m12.0s), 02/60 VUs, 4 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m10.4s/26m00.0s
+
+running (00m13.0s), 02/60 VUs, 4 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m11.4s/26m00.0s
+time="2025-08-14T09:50:23+05:30" level=info msg="Starting analytics workflow" source=console
+
+running (00m14.0s), 02/60 VUs, 5 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m12.4s/26m00.0s
+time="2025-08-14T09:50:24+05:30" level=info msg="Starting complete purchase workflow for user 1" source=console
+
+running (00m15.0s), 02/60 VUs, 6 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m13.4s/26m00.0s
+time="2025-08-14T09:50:25+05:30" level=info msg="Starting analytics workflow" source=console
+
+running (00m16.0s), 02/60 VUs, 7 complete and 0 interrupted iterations
+default   [   1% ] 02/60 VUs  00m14.4s/26m00.0s

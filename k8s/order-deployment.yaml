@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: order-service
-          image: order-service:1.0.25
+          image: order-service:1.0.27
           imagePullPolicy: Never
           ports:
             - containerPort: 3002
