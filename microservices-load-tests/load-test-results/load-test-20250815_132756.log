@@ -1,0 +1,55 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: comprehensive-load-test.js
+        output: json (./load-test-results/comprehensive-20250815_132756.json)
+
+     scenarios: (100.00%) 1 scenario, 60 max VUs, 26m30s max duration (incl. graceful stop):
+              * default: Up to 60 looping VUs for 26m0s over 6 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+
+time="2025-08-15T13:27:59+05:30" level=info msg="Setting up comprehensive load test..." source=console
+time="2025-08-15T13:27:59+05:30" level=warning msg="Error from API server" error="listen tcp 127.0.0.1:6565: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted."
+
+Run       [ 100% ] setup()
+default   [   0% ]
+
+Run       [ 100% ] setup()
+default   [   0% ]
+
+Run       [ 100% ] setup()
+default   [   0% ]
+
+Run       [ 100% ] setup()
+default   [   0% ]
+
+Run       [ 100% ] setup()
+default   [   0% ]
+
+Run       [ 100% ] setup()
+default   [   0% ]
+
+Run       [ 100% ] setup()
+default   [   0% ]
+
+Run       [ 100% ] setup()
+default   [   0% ]
+
+Run       [ 100% ] setup()
+default   [   0% ]
+
+Run       [ 100% ] setup()
+default   [   0% ]
+
+Run       [ 100% ] setup()
+default   [   0% ]
+
+Run       [ 100% ] setup()
+default   [   0% ]
+
+Run       [ 100% ] setup()
+default   [   0% ]

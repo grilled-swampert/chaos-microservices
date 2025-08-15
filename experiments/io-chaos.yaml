@@ -1,0 +1,27 @@
+# io-chaos-schedule.yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: Schedule
+metadata:
+  name: io-chaos-schedule
+  namespace: default
+spec:
+  schedule: "@every 4m"
+  historyLimit: 3
+  concurrencyPolicy: Forbid
+  type: IOChaos
+  ioChaos:
+    action: latency
+    mode: one
+    selector:
+      namespaces:
+        - default
+      expressionSelectors:
+        - key: app
+          operator: In
+          values:
+            - user-service
+            - order-service
+            - payment-service
+    delay: "200ms"
+    percent: 50
+    duration: "40s"

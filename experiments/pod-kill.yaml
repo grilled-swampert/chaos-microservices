@@ -1,0 +1,25 @@
+# pod-kill-all-services-schedule.yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: Schedule
+metadata:
+  name: pod-kill-all-services
+  namespace: default
+spec:
+  schedule: "@every 1m"
+  historyLimit: 3
+  concurrencyPolicy: Forbid
+  type: PodChaos
+  podChaos:
+    action: pod-kill
+    mode: all
+    selector:
+      namespaces:
+        - default
+      expressionSelectors:
+        - key: app
+          operator: In
+          values:
+            - user-service
+            - order-service
+            - payment-service
+    duration: "30s"

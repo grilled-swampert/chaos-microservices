@@ -1,0 +1,28 @@
+# cpu-stress-schedule.yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: Schedule
+metadata:
+  name: cpu-stress-schedule
+  namespace: default
+spec:
+  schedule: "@every 3m"
+  historyLimit: 3
+  concurrencyPolicy: Forbid
+  type: StressChaos
+  stressChaos:
+    mode: one
+    selector:
+      namespaces:
+        - default
+      expressionSelectors:
+        - key: app
+          operator: In
+          values:
+            - user-service
+            - order-service
+            - payment-service
+    stressors:
+      cpu:
+        workers: 2
+        load: 80
+    duration: "45s"

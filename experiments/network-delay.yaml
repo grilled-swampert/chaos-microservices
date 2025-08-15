@@ -1,0 +1,29 @@
+# network-delay-schedule.yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: Schedule
+metadata:
+  name: network-delay-schedule
+  namespace: default
+spec:
+  schedule: "@every 2m"
+  historyLimit: 3
+  concurrencyPolicy: Forbid
+  type: NetworkChaos
+  networkChaos:
+    action: delay
+    mode: all
+    selector:
+      namespaces:
+        - default
+      expressionSelectors:
+        - key: app
+          operator: In
+          values:
+            - user-service
+            - order-service
+            - payment-service
+    delay:
+      latency: "500ms"
+      correlation: "0"
+      jitter: "100ms"
+    duration: "1m"
