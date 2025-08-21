@@ -1,0 +1,35 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: kong-rate-limit-order
+plugin: rate-limiting
+config:
+  minute: 100
+  hour: 1000
+  policy: local
+  limit_by: consumer
+  fault_tolerant: true
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: kong-rate-limit-user
+plugin: rate-limiting
+config:
+  minute: 200
+  hour: 2000
+  policy: local
+  limit_by: consumer
+  fault_tolerant: true
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: kong-rate-limit-payment
+plugin: rate-limiting
+config:
+  minute: 50
+  hour: 500
+  policy: local
+  limit_by: consumer
+  fault_tolerant: true
