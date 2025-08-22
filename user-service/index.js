@@ -8,6 +8,7 @@ const logger = require('./logger');
 const { NodeTracerProvider } = require("@opentelemetry/sdk-trace-node");
 const { SimpleSpanProcessor } = require("@opentelemetry/sdk-trace-base");
 const { JaegerExporter } = require("@opentelemetry/exporter-jaeger");
+const CircuitBreaker = require("opossum");
 
 const provider = new NodeTracerProvider();
 const exporter = new JaegerExporter({
@@ -24,6 +25,16 @@ app.use(
     stream: { write: (msg) => logger.http(msg.trim()) },
   })
 );
+
+// Configure breaker
+const breaker = new CircuitBreaker(callPayment, {
+  timeout: 3000, // fail if it takes longer than 3s
+  errorThresholdPercentage: 50, // open if >50% fail
+  resetTimeout: 10000, // try again after 10s
+});
+
+// Fallback if breaker is open
+breaker.fallback(() => "User service unavailable. Please try later.");
 
 const port = process.env.PORT || 3001;
 
