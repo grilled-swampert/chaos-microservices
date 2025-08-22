@@ -5,6 +5,16 @@ const metricsMiddleware = require('./metricsMiddleware');
 const client = require('./metrics').client;
 const morgan = require('morgan');
 const logger = require('./logger');
+const { NodeTracerProvider } = require("@opentelemetry/sdk-trace-node");
+const { SimpleSpanProcessor } = require("@opentelemetry/sdk-trace-base");
+const { JaegerExporter } = require("@opentelemetry/exporter-jaeger");
+
+const provider = new NodeTracerProvider();
+const exporter = new JaegerExporter({
+  endpoint: "http://jaeger-collector.observability.svc.cluster.local:14268/api/traces",
+});
+provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+provider.register();
 
 const app = express();
 app.use(express.json());
