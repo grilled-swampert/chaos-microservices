@@ -5,17 +5,6 @@ const metricsMiddleware = require('./metricsMiddleware');
 const client = require('./metrics').client;
 const morgan = require('morgan');
 const logger = require('./logger');
-const { NodeTracerProvider } = require("@opentelemetry/sdk-trace-node");
-const { SimpleSpanProcessor } = require("@opentelemetry/sdk-trace-base");
-const { JaegerExporter } = require("@opentelemetry/exporter-jaeger");
-const CircuitBreaker = require("opossum");
-
-const provider = new NodeTracerProvider();
-const exporter = new JaegerExporter({
-  endpoint: "http://jaeger-collector.observability.svc.cluster.local:14268/api/traces",
-});
-provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-provider.register();
 
 const app = express();
 app.use(express.json());
@@ -23,15 +12,6 @@ app.use(metricsMiddleware);
 app.use(morgan('combined', {
   stream: { write: (msg) => logger.http(msg.trim()) }
 }));
-
-const breaker = new CircuitBreaker(callPayment, {
-  timeout: 3000, // fail if it takes longer than 3s
-  errorThresholdPercentage: 50, // open if >50% fail
-  resetTimeout: 10000, // try again after 10s
-});
-
-// Fallback if breaker is open
-breaker.fallback(() => "Payment service unavailable. Please try later.");
 
 const port = process.env.PORT || 3002;
 
